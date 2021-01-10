@@ -1,3 +1,4 @@
+from pydom.variables.variables import MatrixExpr, ScalarExpr, VectorExpr
 from pydom.utils.errors import ExpressionMismatchError
 from pydom.variables import Variable, Expr
 
@@ -11,7 +12,22 @@ class Add(Expr):
             self.__type__ = l.__type__
         else:
             raise ExpressionMismatchError
+        if self.__type__ == type(ScalarExpr()): # Not sure this is a good thing
+            if self._left.value == 0:
+                self._left == None
+            if self._right.value == 0:
+                self._right = None
+
+        if self.__type__ == type(VectorExpr()):
+            # TODO
+            pass
+
+        if self.__type__ == type(MatrixExpr()):
+            # TODO
+            pass
 
     def __str__(self):
         str = self._left.__str__() + '+' + self._right.__str__()
         return str
+
+
