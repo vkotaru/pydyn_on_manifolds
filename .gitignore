@@ -1,5 +1,6 @@
 # PyCharm
 .idea/
+.metals
 
 # Visual Studio Code
 .vscode/

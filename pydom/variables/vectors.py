@@ -1,6 +1,5 @@
 from pydom.operations.variation import Delta
-from pydom.variables.variables import VectorExpr
-from pydom.variables import Variable, Scalar
+from pydom.variables.variables import VectorExpr, Variable
 import numpy as np
 
 class Vector(Variable):

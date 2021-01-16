@@ -1,7 +1,5 @@
 from pydom.operations.variation import Delta
-from types import new_class
-from pydom.variables.variables import Expr, ScalarExpr
-from pydom.variables import Variable
+from pydom.variables.variables import Expr, ScalarExpr, Variable
 
 class Scalar(Variable):
     def __init__(self, s=None, value=None, attr=None):

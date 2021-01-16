@@ -1,3 +1,4 @@
-from .variables import Variable, Expr
-from .scalars import  Scalar
-from .vectors import Vector
+from . import variables
+from . import scalars
+from . import vectors 
+from . import matrices

@@ -1,6 +1,6 @@
 from pydom.variables.variables import MatrixExpr, ScalarExpr, VectorExpr
 from pydom.utils.errors import ExpressionMismatchError
-from pydom.variables import Variable, Expr
+from pydom.variables.variables import Variable, Expr
 
 
 class Add(Expr):
