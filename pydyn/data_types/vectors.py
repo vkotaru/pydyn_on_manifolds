@@ -1,19 +1,15 @@
-from pydom.operations.variation import Delta
-from pydom.variables.variables import VectorExpr, Variable
+from pydyn.operations.addition import Add, VAdd, MAdd
 import numpy as np
 
-class Vector(Variable):
-    """
-    Symbolic Vector class
-    """
+class Vector(object):
     def __init__(self, s=None, size=3, value=None, attr=None):
-        super().__init__(s)
+        self.name = s
         self.size = (size,)
         if value is None:
             self.value = np.empty(size, dtype='object')
         else: 
             self.value = value
-        self.__type__ == type(VectorExpr())
+        self.type = 'VectorExpr'
 
         self.attr = attr # Constant, Zero, Ones
         if attr is not None:
@@ -31,13 +27,20 @@ class Vector(Variable):
                 self.isConstant = True
 
     def __str__(self):
-        return super().__str__()
+        return self.name
 
-    def delta(self):
-        if self.isOnes or self.isZero or self.isConstant:
-            return Vector('0', attr=['Constant', 'Zero'])
+    def __add__(self, other):
+        if other.type=='VectorExpr':
+            return  VAdd(self, other)
         else:
-            name = 'delta{'+self.name+'}'
-            delta_cls = Delta(Vector(name, value=self.value))
-            return delta_cls
+            from pydyn.utils.errors import ExpressionMismatchError
+            raise ExpressionMismatchError
+
+    # def delta(self):
+    #     if self.isOnes or self.isZero or self.isConstant:
+    #         return Vector('0', attr=['Constant', 'Zero'])
+    #     else:
+    #         name = 'delta{'+self.name+'}'
+    #         delta_cls = Delta(Vector(name, value=self.value))
+    #         return delta_cls
 

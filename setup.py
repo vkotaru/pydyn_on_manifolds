@@ -2,9 +2,9 @@
 from setuptools import setup
 
 setup(
-    name='pydom',
+    name='pydyn',
     version='0.1.0',
-    packages=['pydom'],
+    packages=['pydyn'],
     install_requires=[
         "scipy", 
         "matplotlib",

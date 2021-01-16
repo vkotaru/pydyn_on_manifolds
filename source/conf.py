@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'pydom'
+project = 'pydyn'
 copyright = '2021, vkotaru'
 author = 'vkotaru'
 
