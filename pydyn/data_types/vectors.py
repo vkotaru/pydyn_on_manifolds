@@ -44,3 +44,15 @@ class Vector(object):
     #         delta_cls = Delta(Vector(name, value=self.value))
     #         return delta_cls
 
+
+def getVectors(input):
+    if isinstance(input, list):
+        vars = input
+    elif isinstance(input, str):
+        vars = input.split()
+    else:
+        return None
+    s = []
+    for v in vars:
+        s.append(Vector(v))
+    return tuple(s)

@@ -36,3 +36,16 @@ class Matrix(object):
         else:
             from pydyn.utils.errors import ExpressionMismatchError
             raise ExpressionMismatchError  # def delta(self):  #     if self.isOnes or self.isZero or self.isConstant:  #         return Matrix('0', attr=['Constant', 'Zero'])  #     else:  #         name = 'delta{'+self.name+'}'  #         delta_cls = Delta(Matrix(name, value=self.value))  #         return delta_cls  #  #  #  #
+
+
+def getMatrices(input):
+    if isinstance(input, list):
+        vars = input
+    elif isinstance(input, str):
+        vars = input.split()
+    else:
+        return None
+    s = []
+    for v in vars:
+        s.append(Matrix(v))
+    return tuple(s)

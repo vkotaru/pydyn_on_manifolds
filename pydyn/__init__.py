@@ -9,9 +9,9 @@ if sys.version_info < (3, 6):
 del sys
 
 # from . import data_types, operations, utils
-from .data_types.scalars import Scalar
-from .data_types.vectors import Vector
-from .data_types.matrices import Matrix
+from .data_types.scalars import Scalar, getScalars
+from .data_types.vectors import Vector, getVectors
+from .data_types.matrices import Matrix, getMatrices
 
 # from .operations.multiple import Mul
 from .operations.addition import Add, VAdd, MAdd

@@ -1,16 +1,14 @@
+from pydyn.data_types.matrices import getMatrices
+from pydyn.data_types.vectors import getVectors
 from pydyn import *
 
-a = Scalar('a')
-b = Scalar('b')
+a, b = getScalars('a b')
 sum_ab = a+b
 
-v = Vector('v')
-u = Vector('u')
-x = Vector('x')
+u, v, x = getVectors(['u', 'v', 'x'])
 sum_uv = u+v
 
-M = Matrix('M')
-N = Matrix('N')
+M, N = getMatrices('M N')
 sum_MN = M+N
 
 mul_ab = Mul(a,b)

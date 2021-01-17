@@ -1,4 +1,5 @@
 from pydyn.operations.addition import Add, VAdd, MAdd
+from pydyn.operations.other import Delta
 
 class Scalar(object):
     def __init__(self, s=None, value=None, attr=None):
@@ -23,4 +24,20 @@ class Scalar(object):
             from pydyn.utils.errors import ExpressionMismatchError
             raise ExpressionMismatchError
 
-    #  # def delta(self):  #     if self.isConstant:  #         return Scalar('0', value=0)  #     else:  #         name = 'delta{'+self.name+'}'  #         delta_cls = Delta(Scalar(name, value=self.value))  #         return delta_cls
+    def delta(self): 
+        if self.isConstant:
+            return Scalar('0', value=0)
+        else:
+            return Delta(self)
+
+def getScalars(input):
+    if isinstance(input, list):
+        vars = input
+    elif isinstance(input, str):
+        vars = input.split()
+    else:
+        return None
+    s = []
+    for v in vars:
+        s.append(Scalar(v))
+    return tuple(s)
