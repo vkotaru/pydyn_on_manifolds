@@ -24,8 +24,16 @@ def point_mass():
     v = x.diff()
 
     # computing energies
-    PE = m*x.dot(g*e3)
-    KE = m*Dot(v,v)
+    PE = m * x.dot(g * e3)
+    KE = m * Dot(v, v) * 0.5
+
+    # Lagrangian
+    L = KE - PE
+
+    # infinitesimal work
+    deltaW = Dot(x.delta(), f)
+
+    compute_eom(L, deltaW, [x])
 
     pass
 

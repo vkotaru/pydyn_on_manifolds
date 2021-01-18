@@ -83,10 +83,16 @@ class Expr(object):
     def __str__(self):
         raise NotImplementedError
 
+    def __eq__(self, other):
+        return self.__str__() == other.__str__()
+
     def __add__(self, other):
         raise NotImplementedError
 
     def __mul__(self, other):
+        raise NotImplementedError
+
+    def __sub__(self, other):
         raise NotImplementedError
 
     def delta(self):

@@ -3,26 +3,19 @@ import numpy as np
 from pydyn.operations.multiplication import SMMul, MVMul, MMMul
 from pydyn.data_types.expr import Expression, Expr
 from pydyn.operations.transpose import Transpose
-from pydyn.operations.addition import MAdd
 from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
 
 
-class Matrix(Expr):
-    def __init__(self, s=None, size=(3, 3), value=None, attr=None):
+class MatrixExpr(Expr):
+    def __init__(self):
         super().__init__()
-        self.name = s
-        self.size = size
-        if value is None:
-            self.value = np.empty(size, dtype='object')
-        else:
-            self.value = value
         self.type = Expression.MATRIX
-        self.attr = attr
 
     def __str__(self):
-        return self.name
+        raise NotImplementedError
 
     def __add__(self, other):
+        from pydyn.operations.addition import MAdd
         if other.type == Expression.MATRIX:
             return MAdd(self, other)
         else:
@@ -40,6 +33,21 @@ class Matrix(Expr):
             return MMMul(self, other)
         else:
             raise UndefinedCaseError
+
+
+class Matrix(MatrixExpr):
+    def __init__(self, s=None, size=(3, 3), value=None, attr=None):
+        super().__init__()
+        self.name = s
+        self.size = size
+        if value is None:
+            self.value = np.empty(size, dtype='object')
+        else:
+            self.value = value
+        self.attr = attr
+
+    def __str__(self):
+        return self.name
 
 
 def getMatrices(input):

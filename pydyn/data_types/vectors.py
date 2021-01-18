@@ -1,34 +1,25 @@
 import numpy as np
 from pydyn.data_types.expr import Expression, Expr
-from pydyn.operations.addition import Add, VAdd, MAdd
-from pydyn.operations.multiplication import SVMul, VVMul, MVMul
-from pydyn.operations.geometry import Delta, Dot, Cross
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
 
 
-class Vector(Expr):
-    def __init__(self, s=None, size=3, value=None, attr=None):
+class VectorExpr(Expr):
+    def __init__(self):
         super().__init__()
-        self.name = s
-        self.size = (size,)
-        if value is None:
-            self.value = np.empty(size, dtype='object')
-        else:
-            self.value = value
-            self.size = self.value.shape
         self.type = Expression.VECTOR
-        self.attr = attr  # Constant, Zero, Ones
 
     def __str__(self):
-        return self.name
+        raise NotImplementedError
 
     def __add__(self, other):
+        from pydyn.operations.addition import VAdd
         if other.type == Expression.VECTOR:
             return VAdd(self, other)
         else:
             raise ExpressionMismatchError
 
     def __mul__(self, other):
+        from pydyn.operations.multiplication import SVMul, VVMul, MVMul
         if other.type == Expression.SCALAR:
             return SVMul(self, other)
         elif other.type == Expression.VECTOR:
@@ -38,19 +29,38 @@ class Vector(Expr):
         else:
             return UndefinedCaseError
 
+    def dot(self, other):
+        from pydyn.operations.geometry import Dot
+
+        return Dot(self, other)
+
+    def cross(self, other):
+        from pydyn.operations.geometry import Cross
+
+        return Cross(self, other)
+
+
+class Vector(VectorExpr):
+    def __init__(self, s=None, size=3, value=None, attr=None):
+        super().__init__()
+        self.name = s
+        self.size = (size,)
+        if value is None:
+            self.value = np.empty(size, dtype='object')
+        else:
+            self.value = value
+            self.size = self.value.shape
+        self.attr = attr  # Constant, Zero, Ones
+
+    def __str__(self):
+        return self.name
+
     def delta(self):
         if self.isOnes or self.isZero or self.isConstant:
             return Vector('0', attr=['Constant', 'Zero'])
         else:
-            name = 'delta{' + self.name + '}'
-            delta_cls = Delta(Vector(name, value=self.value))
-            return delta_cls
-
-    def dot(self, other):
-        return Dot(self, other)
-
-    def cross(self, other):
-        return Cross(self, other)
+            from pydyn.operations.geometry import Delta
+            return Delta(self)
 
     def diff(self):
         if self.isConstant:

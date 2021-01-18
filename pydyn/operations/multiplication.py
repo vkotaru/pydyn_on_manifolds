@@ -1,16 +1,22 @@
 from pydyn.data_types.expr import Expr, Expression
+from pydyn.data_types.scalars import ScalarExpr, Scalar
+from pydyn.data_types.vectors import VectorExpr
 from pydyn.operations.nodes import BinaryNode
 from pydyn.operations.transpose import Transpose
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
 
 
-class Mul(Expr, BinaryNode):
+class Mul(ScalarExpr, BinaryNode):
     """
     Scalar multiplication
     """
 
     def __init__(self, l, r):
         super().__init__()
+        if type(l) == float or type(l) == int:
+            l = Scalar('(' + str(l) + ')', attr=['Constant'])
+        if type(r) == float or type(r) == int:
+            r = Scalar('(' + str(r) + ')', attr=['Constant'])
         if l.type == Expression.SCALAR and r.type == Expression.SCALAR:
             self.left = l
             self.right = r
@@ -22,18 +28,18 @@ class Mul(Expr, BinaryNode):
         str = self.left.__str__() + self.right.__str__()
         return str
 
-    def __mul__(self, other):
-        if other.type == Expression.SCALAR:
-            return Mul(self, other)
-        elif other.type == Expression.VECTOR:
-            return SVMul(self, other)
-        elif other.type == Expression.MATRIX:
-            return SMMul(self, other)
+    def delta(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return Mul(self.left, self.right.delta())
+        elif not self.left.isConstant and self.right.isConstant:
+            return Mul(self.left.delta(), self.right)
+        elif self.right.isConstant and self.right.isConstant:
+            return Scalar('0', attr=['Constant', 'Zero'])
         else:
-            raise UndefinedCaseError
+            Mul(self.left.delta(), self.right) + Mul(self.left, self.right.delta())
 
 
-class MVMul(Expr, BinaryNode):
+class MVMul(VectorExpr, BinaryNode):
     """
     Matrix-Vector multiplication
     """

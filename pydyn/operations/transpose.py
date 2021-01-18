@@ -1,5 +1,4 @@
 from pydyn.data_types.expr import Expr, Expression
-from pydyn.operations.addition import Add, VAdd, MAdd
 from pydyn.operations.nodes import UnaryNode
 from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
 
@@ -15,6 +14,7 @@ class Transpose(Expr, UnaryNode):
         return self.expr.__str__() + '\''
 
     def __add__(self, other):
+        from pydyn.operations.addition import Add, VAdd, MAdd
         if self.type == Expression.SCALAR and other.type == Expression.SCALAR:
             return Add(self, other)
         elif self.type == Expression.VECTOR and other.type == Expression.VECTOR:
