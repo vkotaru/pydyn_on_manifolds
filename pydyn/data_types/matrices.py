@@ -1,41 +1,45 @@
-from pydyn.operations.addition import MAdd
 import numpy as np
 
+from pydyn.operations.multiplication import SMMul, MVMul, MMMul
+from pydyn.data_types.expr import Expression, Expr
+from pydyn.operations.transpose import Transpose
+from pydyn.operations.addition import MAdd
+from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
 
-class Matrix(object):
+
+class Matrix(Expr):
     def __init__(self, s=None, size=(3, 3), value=None, attr=None):
+        super().__init__()
         self.name = s
         self.size = size
         if value is None:
             self.value = np.empty(size, dtype='object')
         else:
             self.value = value
-        self.type = 'MatrixExpr'
-
-        self.attr = attr  # Constant, Zero, Ones
-        if attr is not None:
-            if 'Zero' in attr:
-                self.isZero = True
-                self.isConstant = True
-            else:
-                self.isZero = False
-            if 'Ones' in attr:
-                self.isOnes = True
-                self.isConstant = True
-            else:
-                self.isOnes = False
-            if 'Constant' in attr:
-                self.isConstant = True
+        self.type = Expression.MATRIX
+        self.attr = attr
 
     def __str__(self):
         return self.name
 
     def __add__(self, other):
-        if other.type == 'MatrixExpr':
+        if other.type == Expression.MATRIX:
             return MAdd(self, other)
         else:
-            from pydyn.utils.errors import ExpressionMismatchError
-            raise ExpressionMismatchError  # def delta(self):  #     if self.isOnes or self.isZero or self.isConstant:  #         return Matrix('0', attr=['Constant', 'Zero'])  #     else:  #         name = 'delta{'+self.name+'}'  #         delta_cls = Delta(Matrix(name, value=self.value))  #         return delta_cls  #  #  #  #
+            raise ExpressionMismatchError
+
+    def __mul__(self, other):
+        if other.type == Expression.SCALAR:
+            return SMMul(self, other)
+        elif other.type == Expression.VECTOR:
+            if type(other) == type(Transpose(None)):
+                raise ExpressionMismatchError
+            else:
+                return MVMul(self, other)
+        elif other.type == Expression.MATRIX:
+            return MMMul(self, other)
+        else:
+            raise UndefinedCaseError
 
 
 def getMatrices(input):

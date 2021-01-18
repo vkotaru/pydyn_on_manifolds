@@ -16,3 +16,5 @@ from .data_types.matrices import Matrix, getMatrices
 # from .operations.multiple import Mul
 from .operations.addition import Add, VAdd, MAdd
 from .operations.multiplication import Mul, MMMul, MVMul, SMMul, SVMul, VVMul
+from .operations.transpose import Transpose
+from .operations.geometry import Delta, Dot, Cross, Hat, Vee
