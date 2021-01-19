@@ -1,6 +1,8 @@
+from pydyn import Add, MAdd
+from pydyn.data_types.matrices import Matrix, MatrixExpr
 from pydyn.data_types.expr import Expr, Expression
 from pydyn.data_types.scalars import ScalarExpr, Scalar
-from pydyn.data_types.vectors import VectorExpr
+from pydyn.data_types.vectors import VectorExpr, Vector
 from pydyn.operations.nodes import BinaryNode
 from pydyn.operations.transpose import Transpose
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
@@ -14,15 +16,16 @@ class Mul(ScalarExpr, BinaryNode):
     def __init__(self, l, r):
         super().__init__()
         if type(l) == float or type(l) == int:
-            l = Scalar('(' + str(l) + ')', attr=['Constant'])
+            l = Scalar('(' + str(l) + ')', value=l, attr=['Constant'])
         if type(r) == float or type(r) == int:
-            r = Scalar('(' + str(r) + ')', attr=['Constant'])
+            r = Scalar('(' + str(r) + ')', value=r, attr=['Constant'])
         if l.type == Expression.SCALAR and r.type == Expression.SCALAR:
             self.left = l
             self.right = r
             self.type = l.type
         else:
             raise ExpressionMismatchError
+        self.isConstant = self.left.isConstant and self.right.isConstant
 
     def __str__(self):
         str = self.left.__str__() + self.right.__str__()
@@ -33,10 +36,10 @@ class Mul(ScalarExpr, BinaryNode):
             return Mul(self.left, self.right.delta())
         elif not self.left.isConstant and self.right.isConstant:
             return Mul(self.left.delta(), self.right)
-        elif self.right.isConstant and self.right.isConstant:
+        elif self.left.isConstant and self.right.isConstant:
             return Scalar('0', attr=['Constant', 'Zero'])
         else:
-            Mul(self.left.delta(), self.right) + Mul(self.left, self.right.delta())
+            return Mul(self.left.delta(), self.right) + Mul(self.left, self.right.delta())
 
 
 class MVMul(VectorExpr, BinaryNode):
@@ -59,6 +62,7 @@ class MVMul(VectorExpr, BinaryNode):
                 raise ExpressionMismatchError
         else:
             raise ExpressionMismatchError
+        self.isConstant = self.left.isConstant and self.right.isConstant
 
     def __str__(self):
         str = self.left.__str__() + self.right.__str__()
@@ -72,8 +76,18 @@ class MVMul(VectorExpr, BinaryNode):
         elif other.type == Expression.MATRIX:
             return MVMul(self, other)
 
+    def delta(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return MVMul(self.left, self.right.delta())
+        elif not self.left.isConstant and self.right.isConstant:
+            return MVMul(self.left.delta(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Vector('0', attr=['Constant', 'Zero'])
+        else:
+            return MVMul(self.left.delta(), self.right) + MVMul(self.left, self.right.delta())
 
-class MMMul(Expr, BinaryNode):
+
+class MMMul(MatrixExpr, BinaryNode):
     """
     Matrix-Matrix multiplication
     """
@@ -86,6 +100,7 @@ class MMMul(Expr, BinaryNode):
             self.type = Expression.MATRIX
         else:
             raise ExpressionMismatchError
+        self.isConstant = self.left.isConstant and self.right.isConstant
 
     def __str__(self):
         str = self.left.__str__() + self.right.__str__()
@@ -99,14 +114,28 @@ class MMMul(Expr, BinaryNode):
         elif other.type == Expression.MATRIX:
             return MMMul(self, other)
 
+    def delta(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return MMMul(self.left, self.right.delta())
+        elif not self.left.isConstant and self.right.isConstant:
+            return MMMul(self.left.delta(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Matrix('O', attr=['Constant', 'Zero'])
+        else:
+            return MMMul(self.left.delta(), self.right) + MMMul(self.left, self.right.delta())
 
-class SVMul(Expr, BinaryNode):
+
+class SVMul(VectorExpr, BinaryNode):
     """
     Scalar-Vector multiplication
     """
 
     def __init__(self, l, r):
         super().__init__()
+        if type(l) == float or type(l) == int:
+            l = Scalar('(' + str(l) + ')', value=l, attr=['Constant'])
+        if type(r) == float or type(r) == int:
+            r = Scalar('(' + str(r) + ')', value=r, attr=['Constant'])
         if l.type == Expression.VECTOR and r.type == Expression.SCALAR:
             self.left = l
             self.right = r
@@ -117,6 +146,7 @@ class SVMul(Expr, BinaryNode):
             self.type = Expression.VECTOR
         else:
             raise ExpressionMismatchError
+        self.isConstant = self.left.isConstant and self.right.isConstant
 
     def __str__(self):
         str = self.left.__str__() + self.right.__str__()
@@ -131,14 +161,29 @@ class SVMul(Expr, BinaryNode):
             elif other.type == Expression.MATRIX:
                 return MVMul(self, other)
 
+    def delta(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return SVMul(self.left, self.right.delta())
+        elif not self.left.isConstant and self.right.isConstant:
+            return SVMul(self.left.delta(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Vector('0', attr=['Constant', 'Zero'])
+        else:
+            return SVMul(self.left.delta(), self.right) + SVMul(self.left, self.right.delta())
 
-class SMMul(Expr, BinaryNode):
+
+class SMMul(MatrixExpr, BinaryNode):
     """
     Scalar-Matrix Multiplication
     """
 
     def __init__(self, l, r):
         super().__init__()
+        if type(l) == float or type(l) == int:
+            l = Scalar('(' + str(l) + ')', value=l, attr=['Constant'])
+        if type(r) == float or type(r) == int:
+            r = Scalar('(' + str(r) + ')', value=r, attr=['Constant'])
+
         if l.type == Expression.MATRIX and r.type == Expression.SCALAR:
             self.left = l
             self.right = r
@@ -149,6 +194,7 @@ class SMMul(Expr, BinaryNode):
             self.type = Expression.MATRIX
         else:
             raise ExpressionMismatchError
+        self.isConstant = self.left.isConstant and self.right.isConstant
 
     def __str__(self):
         str = self.left.__str__() + self.right.__str__()
@@ -163,6 +209,16 @@ class SMMul(Expr, BinaryNode):
             return MMMul(self, other)
         else:
             raise UndefinedCaseError
+
+    def delta(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return SMMul(self.left, self.right.delta())
+        elif not self.left.isConstant and self.right.isConstant:
+            return SMMul(self.left.delta(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Matrix('O', attr=['Constant', 'Zero'])
+        else:
+            return SMMul(self.left.delta(), self.right) + SMMul(self.left, self.right.delta())
 
 
 class VVMul(Expr, BinaryNode):
@@ -185,9 +241,18 @@ class VVMul(Expr, BinaryNode):
                 raise ExpressionMismatchError
         else:
             raise ExpressionMismatchError
+        self.isConstant = self.left.isConstant and self.right.isConstant
 
     def __str__(self):
         return self.left.__str__() + self.right.__str__()
+
+    def __add__(self, other):
+        if self.type == Expression.SCALAR:
+            return Add(self, other)
+        elif self.type == Expression.MATRIX:
+            return MAdd(self, other)
+        else:
+            raise UndefinedCaseError
 
     def __mul__(self, other):
         if self.type == Expression.SCALAR:
@@ -210,3 +275,18 @@ class VVMul(Expr, BinaryNode):
                 raise UndefinedCaseError
         else:
             raise UndefinedCaseError
+
+    def delta(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return VVMul(self.left, self.right.delta())
+        elif not self.left.isConstant and self.right.isConstant:
+            return VVMul(self.left.delta(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            if self.type == Expression.SCALAR:
+                return Scalar('0', attr=['Constant', 'Zero'])
+            elif self.type == Expression.MATRIX:
+                return Matrix('O', attr=['Constant', 'Zero'])
+            else:
+                raise UndefinedCaseError
+        else:
+            return VVMul(self.left.delta(), self.right) + VVMul(self.left, self.right.delta())

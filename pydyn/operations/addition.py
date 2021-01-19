@@ -37,7 +37,7 @@ class Add(ScalarExpr, BinaryNode):
         elif self.left.isConstant and self.right.isConstant:
             return Scalar('0', attr=['Constant', 'Zero'])
         else:
-            Add(self.left.delta(), self.right.delta())
+            return Add(self.left.delta(), self.right.delta())
 
 
 class VAdd(VectorExpr, BinaryNode):
@@ -62,6 +62,16 @@ class VAdd(VectorExpr, BinaryNode):
         else:
             raise ExpressionMismatchError('VAdd', self.type, other.type)
 
+    def delta(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return self.right.delta()
+        elif not self.left.isConstant and self.right.isConstant:
+            return self.left.delta()
+        elif self.left.isConstant and self.right.isConstant:
+            return Scalar('0', attr=['Constant', 'Zero'])
+        else:
+            return VAdd(self.left.delta(), self.right.delta())
+
 
 class MAdd(MatrixExpr, BinaryNode):
     """Matrix Addition"""
@@ -84,3 +94,13 @@ class MAdd(MatrixExpr, BinaryNode):
             return MAdd(self, other)
         else:
             raise ExpressionMismatchError('MAdd', self.type, other.type)
+
+    def delta(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return self.right.delta()
+        elif not self.left.isConstant and self.right.isConstant:
+            return self.left.delta()
+        elif self.left.isConstant and self.right.isConstant:
+            return Scalar('0', attr=['Constant', 'Zero'])
+        else:
+            return MAdd(self.left.delta(), self.right.delta())

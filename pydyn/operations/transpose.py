@@ -36,3 +36,6 @@ class Transpose(Expr, UnaryNode):
             return MVMul(self, other)
         else:
             raise ExpressionMismatchError('mul', 'Transpose(' + self.type + ')', other.type)
+
+    def delta(self):
+        return Transpose(self.expr.delta())

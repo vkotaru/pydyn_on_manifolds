@@ -40,14 +40,27 @@ vecT_mat_mul = Transpose(x) * M
 
 # Matrix
 # ------
+mat_add = M + N
 mat_scalar_mul = N * b
 mat_vec_mul = N * y
 mat_mat_mul = M * N
 
-
 # Mix and multiply
-expr1 = M*(a+b)
+expr1 = M * (a + b)
 
+# taking variation
+# ----------------
+scalar_sum_delta = scalar_addition.delta()
+vector_sum_delta = vector_add.delta()
+matrix_sum_delta = mat_add.delta()
+
+scalar_prod_delta = scalar_scalar_mul.delta()
+vec_scalar_mul_delta = vec_scalar_mul.delta()
+vecT_vec_mul_delta = vecT_vec_mul.delta()
+vec_vecT_mul_delta = vec_vecT_mul.delta()
+mat_mat_mul_delta = mat_mat_mul.delta()
+mat_vec_mul_delta = mat_vec_mul.delta()
+mat_scalar_mul_delta = mat_scalar_mul.delta()
 
 # print(R1R2)
 print('done')

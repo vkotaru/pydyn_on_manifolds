@@ -1,4 +1,4 @@
-from pydyn import MVMul
+from pydyn import MVMul, Add
 from pydyn.data_types.matrices import MatrixExpr
 from pydyn.data_types.scalars import ScalarExpr
 from pydyn.data_types.vectors import VectorExpr, Vector
@@ -34,6 +34,9 @@ class Dot(ScalarExpr, BinaryNode):
             self.type = Expression.SCALAR
         else:
             raise ExpressionMismatchError
+        self.isConstant = self.left.isConstant and self.right.isConstant
+        if self.left.isZero or self.right.isZero:
+            self.isConstant = True
 
     def __str__(self):
         return 'Dot(' + self.left.__str__() + ',' + self.right.__str__() + ')'
@@ -47,14 +50,14 @@ class Dot(ScalarExpr, BinaryNode):
         else:
             if self.left.isConstant and not self.right.isConstant:
                 return Dot(self.left, self.right.delta())
-            elif not self.right.isConstant and self.right.isConstant:
+            elif not self.left.isConstant and self.right.isConstant:
                 return Dot(self.left.delta(), self.right)
             elif self.left.isConstant and self.right.isConstant:
                 return Vector('0', attr=['Constant', 'Zero'])
             elif self.left == self.right:
-                return Dot(self.left.delta(), self.right)*2
+                return Dot(self.left.delta(), self.right) * 2
             else:
-                return Dot(self.left.delta(), self.right) + Dot(self.left, self.right.delta())
+                return Add(Dot(self.left.delta(), self.right), Dot(self.left, self.right.delta()))
 
 
 class Cross(VectorExpr, BinaryNode):

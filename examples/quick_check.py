@@ -5,8 +5,17 @@ class Test(object):
     def __dot__(self, other):
         print('performing dot operation')
 
+class DerivedClass(Test):
+    def __init__(self):
+        super(DerivedClass, self).__init__()
+
 
 x1 = Test()
 x2 = Test()
+y = DerivedClass()
 
-y = x1.__dot__(x2)
+verifybasedependency = isinstance(y, Test)
+verifybasedependency2 = isinstance(x1, DerivedClass)
+verifybasedependency3 = isinstance(x2, Test)
+
+print('done')

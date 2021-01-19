@@ -1,6 +1,4 @@
 import numpy as np
-
-from pydyn.operations.multiplication import SMMul, MVMul, MMMul
 from pydyn.data_types.expr import Expression, Expr
 from pydyn.operations.transpose import Transpose
 from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
@@ -22,6 +20,7 @@ class MatrixExpr(Expr):
             raise ExpressionMismatchError
 
     def __mul__(self, other):
+        from pydyn.operations.multiplication import SMMul, MVMul, MMMul
         if other.type == Expression.SCALAR:
             return SMMul(self, other)
         elif other.type == Expression.VECTOR:
@@ -48,6 +47,13 @@ class Matrix(MatrixExpr):
 
     def __str__(self):
         return self.name
+
+    def delta(self):
+        if self.isOnes or self.isZero or self.isConstant:
+            return Matrix('O', attr=['Constant', 'Zero'])
+        else:
+            from pydyn.operations.geometry import Delta
+            return Delta(self)
 
 
 def getMatrices(input):
