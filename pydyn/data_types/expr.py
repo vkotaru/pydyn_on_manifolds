@@ -24,8 +24,7 @@ class Expr(object):
         self.isConstant = False
         self.isZero = False
         self.isOnes = False
-        # TODO add derivation dependency
-        # TODO add derivation level
+        self.isUnitNorm = False  # TODO add derivation dependency  # TODO add derivation level
 
     @property
     def name(self):
@@ -101,8 +100,17 @@ class Expr(object):
     def diff(self):
         raise NotImplementedError
 
+    def integrate(self):
+        raise NotImplementedError
+
+    def replace(self, old, new):
+        self._name.replace(old, new)
+
     def flatten(self):
         raise NotImplementedError
 
     def simplify(self):
+        raise NotImplementedError
+
+    def variation_vector(self):
         raise NotImplementedError

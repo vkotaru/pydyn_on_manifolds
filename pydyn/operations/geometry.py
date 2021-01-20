@@ -20,6 +20,12 @@ class Delta(Expr, UnaryNode):
     def __str__(self):
         return 'delta_{' + self.expr.__str__() + '}'
 
+    def diff(self):
+        return Delta(self.expr.diff())
+
+    def integrate(self):
+        return Delta(self.expr.integrate())
+
 
 class Dot(ScalarExpr, BinaryNode):
     """

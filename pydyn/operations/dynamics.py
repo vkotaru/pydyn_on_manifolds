@@ -1,21 +1,24 @@
 from pydyn import Delta
-from pydyn.operations.simplification import simplify
+from pydyn.operations.integration import integrate_by_parts_vectors
+from pydyn.operations.simplification import full_simplify
 
 
 def compute_eom(Lagrangian, inf_work, vars):
     """
     Computes Lagrange-Hamiltonian dynamics using principle of least action
     """
-    # Step: 0
-    # format the tree in to desired format
-    # ------------------------------------
 
-    # Step:1
-    # ------
     # taking variation of lagrangian
     dL = Lagrangian.delta()
     # infinitesimal action integral
     dS = dL + inf_work
-    dS = simplify(dS)
+    dS = full_simplify(dS)
+
+    # integration by parts
+    vector_dots = []
+    for v in vars[1]:
+        vector_dots.append(v.variation_vector().diff())
+
+    dS = integrate_by_parts_vectors(dS, vector_dots)
 
     print('eom done')

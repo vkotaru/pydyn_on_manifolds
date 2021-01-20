@@ -33,7 +33,7 @@ def point_mass():
     # infinitesimal work
     deltaW = Dot(x.delta(), f)
 
-    compute_eom(L, deltaW, [x])
+    compute_eom(L, deltaW, [[], [x], []])
 
     pass
 

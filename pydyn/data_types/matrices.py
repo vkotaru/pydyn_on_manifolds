@@ -55,6 +55,26 @@ class Matrix(MatrixExpr):
             from pydyn.operations.geometry import Delta
             return Delta(self)
 
+    def variation_vector(self):
+        return self.delta()
+
+    def diff(self):
+        if self.isConstant:
+            return Matrix(s='0', size=self.size, attr=['Constant', 'Zero'])
+        else:
+            return Matrix(s='dot_' + self.name, size=self.size)
+
+    def integrate(self):
+        if self.isConstant:
+            raise NotImplementedError
+        else:
+            s = self.name
+            if 'dot_' in s:
+                s.replace('dot_', '')
+                return Matrix(s=s, size=self.size)
+            else:
+                return Matrix(s='int_' + s, size=self.size)
+
 
 def getMatrices(input):
     if isinstance(input, list):

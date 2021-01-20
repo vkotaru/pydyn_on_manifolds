@@ -33,7 +33,7 @@ class ScalarExpr(Expr):
     def __mul__(self, other):
         from pydyn.operations.multiplication import Mul, SVMul, SMMul
         if type(other) == float or type(other) == int:
-            other = Scalar('(' + str(other) + ')', attr=['Constant'])
+            other = Scalar('(' + str(other) + ')', value=other, attr=['Constant'])
         if other.type == Expression.SCALAR:
             return Mul(self, other)
         elif other.type == Expression.VECTOR:
@@ -42,10 +42,6 @@ class ScalarExpr(Expr):
             return SMMul(other, self)
         else:
             raise UndefinedCaseError
-
-    def delta(self):
-        print('im in ScalarExpr')
-        pass
 
 
 class Scalar(ScalarExpr):
@@ -68,6 +64,27 @@ class Scalar(ScalarExpr):
         else:
             from pydyn.operations.geometry import Delta
             return Delta(self)
+
+    def variation_vector(self):
+        return self.delta()
+
+    def diff(self):
+        """differentiation"""
+        if self.isConstant:
+            return Scalar(s='0', value=0, attr=['Constant', 'Zero'])
+        else:
+            return Scalar(s='dot_' + self.name)
+
+    def integrate(self):
+        if self.isConstant:
+            raise NotImplementedError
+        else:
+            s = self.name
+            if 'dot_' in s:
+                s.replace('dot_', '')
+                return Scalar(s=s)
+            else:
+                return Scalar(s='int_' + s)
 
 
 def getScalars(input, attr=None):

@@ -62,5 +62,18 @@ mat_mat_mul_delta = mat_mat_mul.delta()
 mat_vec_mul_delta = mat_vec_mul.delta()
 mat_scalar_mul_delta = mat_scalar_mul.delta()
 
+#
+dx = x.diff()
+delx = x.delta()
+ddelx = delx.diff()
+dela = a.delta()
+da = a.diff()
+
+x2 = dx.integrate()
+x2_ = x.integrate()
+
+delx2 = ddelx.integrate()
+
+
 # print(R1R2)
 print('done')

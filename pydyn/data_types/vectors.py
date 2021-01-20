@@ -41,10 +41,10 @@ class VectorExpr(Expr):
 
 
 class Vector(VectorExpr):
-    def __init__(self, s=None, size=3, value=None, attr=None):
+    def __init__(self, s=None, size=(3,), value=None, attr=None):
         super().__init__()
         self.name = s
-        self.size = (size,)
+        self.size = size
         if value is None:
             self.value = np.empty(size, dtype='object')
         else:
@@ -67,6 +67,20 @@ class Vector(VectorExpr):
             return Vector(s='0', size=self.size, attr=['Constant', 'Zero'])
         else:
             return Vector(s='dot_' + self.name, size=self.size)
+
+    def variation_vector(self):
+        return self.delta()
+
+    def integrate(self):
+        if self.isConstant:
+            raise NotImplementedError
+        else:
+            s = self.name
+            if 'dot_' in s:
+                new_s = s.replace("dot_", "")
+                return Vector(s=new_s, size=self.size)
+            else:
+                return Vector(s='int_' + s, size=self.size)
 
 
 def getVectors(input):
