@@ -12,6 +12,8 @@ class DerivedClass(Test):
 
 x1 = Test()
 x2 = Test()
+
+var = x1 == x2
 y = DerivedClass()
 
 verifybasedependency = isinstance(y, Test)

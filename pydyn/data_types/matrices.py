@@ -76,6 +76,12 @@ class Matrix(MatrixExpr):
                 return Matrix(s='int_' + s, size=self.size)
 
 
+class SkewSymmMatrix(Matrix):
+    def __init__(self):
+        super().__init__()
+        self.attr.append('SkewSymmetry')
+
+
 def getMatrices(input):
     if isinstance(input, list):
         vars = input
