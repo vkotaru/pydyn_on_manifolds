@@ -86,6 +86,9 @@ class Scalar(ScalarExpr):
             else:
                 return Scalar(s='int_' + s)
 
+    def has(self, elem):
+        return self.name == elem.name
+
 
 def getScalars(input, attr=None):
     if isinstance(input, list):

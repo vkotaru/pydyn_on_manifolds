@@ -114,3 +114,6 @@ class Expr(object):
 
     def variation_vector(self):
         raise NotImplementedError
+
+    def has(self, elem):
+        return elem.__str__() in self.__str__()

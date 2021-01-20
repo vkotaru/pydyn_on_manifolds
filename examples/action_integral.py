@@ -1,4 +1,5 @@
 from pydyn import *
+from pydyn.operations.print_tree import print_latex
 from pydyn.utils.errors import ExpressionMismatchError
 import numpy as np
 
@@ -33,9 +34,10 @@ def point_mass():
     # infinitesimal work
     deltaW = Dot(x.delta(), f)
 
-    compute_eom(L, deltaW, [[], [x], []])
+    eqs = compute_eom(L, deltaW, [[], [x], []])
+    print_latex(eqs)
 
-    pass
+    print('done')
 
 
 if __name__ == "__main__":

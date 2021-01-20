@@ -1,70 +1,69 @@
-def collect_scalars(_scalar, _vector):
-    pass
- #
+from pydyn.operations.multiplication import Mul, MVMul
+from pydyn.operations.addition import Add
+from pydyn.operations.geometry import Dot, Cross
 
 
-# // Collect
-# scalar
-# expression
-# with respect to scalar z.
-#
-#
-# def colScalar(e: Exp, z: Exp): Exp = e
+def col(_scalar, _vector):
+    """Collect scalar expression with respect to vector"""
+    # Base Cases
+    #
+    # ADDITION
+    if isinstance(_scalar, Add):
+        return col(_scalar.left, _vector) + col(_scalar.right, _vector)
 
+    #  MULTIPLICATION
+    elif isinstance(_scalar, Mul):
+        return col(_scalar.left, _vector) * col(_scalar.right, _vector)
 
-# match
-# {
-#
-# // ADDITION
-# case
-# Add(u, v) = > colScalar(u, z) + colScalar(v, z)
-#
-# case
-# Mul(u, v) = >
-# if (isMember(Mul(u, v), z)) {substitute(Mul(u, v), z, Num(1.0))}
-# else {Mul(u, v)}
-#
-# case u:Exp = > u
-# }
+    elif isinstance(_scalar, Dot):
+        # POTENTIAL ENERGY
+        if isinstance(_scalar.right, MVMul):
+            raise NotImplementedError
 
-# // Collect scalar expression with respect to vector z.
- #  def col( e:Exp, z:VExp ) : Exp = e match
- #  {
- #    // Base Cases
- #
- #    // ADDITION
- #    case Add(u,v) => col(u,z) + col(v,z)
- #
- #    // MULTIPLICATION
- #    case Mul(u,v) => col(u,z) * col(v,z)
- #
- #
- #    // Potential Energy
- #    case Dot(u,VMul(MMul(MMul(r,SkewMat(s)),y),v)) =>
- #        if (Vec(s) == z) {Dot(Vec(s), Cross(VMul(transpose(r)***y,u),v))}
- #        else {Dot(u,VMul(MMul(MMul(r,SkewMat(s)),y),v))}
- #    case Dot(VMul(MMul(r,SkewMat(s)),v),u) =>
- #        if (Vec(s) == z) {Dot(Vec(s), Cross(VMul(transpose(r),u),v))}
- #        else {Dot(VMul(MMul(r,SkewMat(s)),v),u)}
- #
- #    // Kinetic Energy Terms
- #    case Dot(Cross(b,c),VMul(u,v)) => col(Dot(VMul(u,v),Cross(b,c)),z)
- #    case Dot(VMul(u,v),Cross(b,c)) =>
- #        if (b == z) {Dot(b,Cross(c,VMul(u,v)))}
- #        else if (c == z) {Dot(c,Cross(VMul(u,v),b))}
- #        else if (v == z) {Dot(v,Cross(VMul(u,b),c))}
- #        else {Dot(VMul(u,v),Cross(b,c))}
- #
- #    case Dot(VMul(u,v),a)  => if (v == z) {Dot(v,VMul(u,a))} else {Dot(a,VMul(u,v))}
- #    case Dot(a,VMul(u,v)) => col(Dot(VMul(u,v),a),z)
- #
- #    case Dot(a,Cross(b,c)) =>
- #        if (b == z) {Dot(b,Cross(c,a))}
- #        else if (c == z) {Dot(c,Cross(a,b))}
- #        else {Dot(a,Cross(b,c))}
- #    case Dot(Cross(b,c),a) => col(Dot(a,Cross(b,c)),z)
- #
- #    case Dot(a,b) => if (b == z) {Dot(b,a)} else Dot(a,b)
- #
- #    case u:Exp => u
- #  }
+        elif isinstance(_scalar.left, MVMul):
+            raise NotImplementedError
+        #    // Potential Energy
+        #    case Dot(u,VMul(MMul(MMul(r,SkewMat(s)),y),v)) =>
+        #        if (Vec(s) == z) {Dot(Vec(s), Cross(VMul(transpose(r)***y,u),v))}
+        #        else {Dot(u,VMul(MMul(MMul(r,SkewMat(s)),y),v))}
+        #    case Dot(VMul(MMul(r,SkewMat(s)),v),u) =>
+        #        if (Vec(s) == z) {Dot(Vec(s), Cross(VMul(transpose(r),u),v))}
+        #        else {Dot(VMul(MMul(r,SkewMat(s)),v),u)}
+
+        # KINETIC ENERGY
+        elif isinstance(_scalar.left, Cross) and isinstance(_scalar.right, MVMul):
+            return col(Dot(_scalar.right, _scalar.left), _vector)
+        elif isinstance(_scalar.left, MVMul) and isinstance(_scalar.right, Cross):
+            if _scalar.right.left == _vector:
+                return Dot(_scalar.right.left, Cross(_scalar.right.right, _scalar.left))
+            elif _scalar.right.right == _vector:
+                return Dot(_scalar.right.right, Cross(_scalar.left, _scalar.right.left))
+            elif _scalar.left.right == _vector:
+                return Dot(_scalar.left.right, Cross(MVMul(_scalar.left.left, _scalar.right.left), _scalar.right.right))
+            else:
+                return _scalar
+
+        elif isinstance(_scalar.left, MVMul):
+            if _scalar.left.right == _vector:
+                return Dot(_scalar.left.right, MVMul(_scalar.left.left, _scalar.right))
+            else:
+                return Dot(_scalar.right, _scalar.left)
+        elif isinstance(_scalar.right, MVMul):
+            return col(Dot(_scalar.right, _scalar.left), _vector)
+
+        elif isinstance(_scalar.right, Cross):
+            if _scalar.right.left == _vector:
+                return Dot(_scalar.right.left, Cross(_scalar.right.right, _scalar.left))
+            elif _scalar.right.right == _vector:
+                return Dot(_scalar.right.right, Cross(_scalar.left, _scalar.right.left))
+            else:
+                return _scalar
+
+        else:
+            if _scalar.right == _vector:
+                return Dot(_scalar.right, _scalar.left)
+            else:
+                return _scalar
+
+    else:
+        return _scalar

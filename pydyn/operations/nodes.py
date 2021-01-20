@@ -14,7 +14,6 @@ class UnaryNode(object):
     def expr(self, e):
         self._expr = e
 
-
 class BinaryNode(object):
     """
     Binary Node used by addition, multiplication, dot, cross and other operators

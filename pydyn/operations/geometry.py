@@ -1,6 +1,6 @@
-from pydyn import MVMul, Add
+from pydyn.operations.transpose import Transpose
 from pydyn.data_types.matrices import MatrixExpr
-from pydyn.data_types.scalars import ScalarExpr
+from pydyn.data_types.scalars import ScalarExpr, Scalar
 from pydyn.data_types.vectors import VectorExpr, Vector
 from pydyn.data_types.expr import Expr, Expression
 from pydyn.operations.nodes import UnaryNode, BinaryNode
@@ -18,7 +18,49 @@ class Delta(Expr, UnaryNode):
         self.type = expr.type
 
     def __str__(self):
-        return 'delta_{' + self.expr.__str__() + '}'
+        return '\delta{' + self.expr.__str__() + '}'
+
+    def __mul__(self, other):
+        from pydyn.operations.multiplication import Mul, SVMul, SMMul, VVMul, MVMul, MMMul
+        if type(other) == float or type(other) == int:
+            other = Scalar('(' + str(other) + ')', value=other, attr=['Constant'])
+        if self.type == Expression.SCALAR:
+            if other.type == Expression.SCALAR:
+                return Mul(self, other)
+            elif other.type == Expression.VECTOR:
+                return SVMul(other, self)
+            elif other.type == Expression.MATRIX:
+                return SMMul(other, self)
+            else:
+                raise UndefinedCaseError
+
+        elif self.type == Expression.VECTOR:
+            if other.type == Expression.SCALAR:
+                return SVMul(self, other)
+            elif other.type == Expression.VECTOR:
+                return VVMul(self, other)
+            elif other.type == Expression.MATRIX:
+                return MVMul(self, other)
+            else:
+                return UndefinedCaseError
+
+        elif self.type == Expression.MATRIX:
+            if other.type == Expression.SCALAR:
+                return SMMul(self, other)
+            elif other.type == Expression.VECTOR:
+                if type(other) == type(Transpose(None)):
+                    raise ExpressionMismatchError
+                else:
+                    return MVMul(self, other)
+            elif other.type == Expression.MATRIX:
+                return MMMul(self, other)
+            else:
+                raise UndefinedCaseError
+        else:
+            raise UndefinedCaseError
+
+    def __add__(self, other):
+        return self.expr.__add__(other)
 
     def diff(self):
         return Delta(self.expr.diff())
@@ -48,6 +90,8 @@ class Dot(ScalarExpr, BinaryNode):
         return 'Dot(' + self.left.__str__() + ',' + self.right.__str__() + ')'
 
     def delta(self):
+        from pydyn.operations.multiplication import MVMul
+        from pydyn.operations.addition import Add
         if isinstance(self.right, MVMul):
             #     if ((m.isInstanceOf[SymmetricMatrix]) & & (
             #             a == b)) Add(Mul(NumScalar(2), Dot(a.delta(), MVMul(m, b))), Dot(a, MVMul(m.delta(), b)))

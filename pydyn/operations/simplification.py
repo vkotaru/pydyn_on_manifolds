@@ -171,7 +171,7 @@ def terms(expr):
 
 def simplify(expr):
     """combines constants and eliminates zeros """
-    if isinstance(expr, ScalarExpr):
+    if isinstance(expr, ScalarExpr):  # TODO modify this to Expression.SCALAR?
         if isinstance(expr, Add):
             """Remove zeros"""
             if expr.left.value is not None and expr.right.value is not None:

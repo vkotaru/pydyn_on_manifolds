@@ -21,6 +21,9 @@ class MatrixExpr(Expr):
 
     def __mul__(self, other):
         from pydyn.operations.multiplication import SMMul, MVMul, MMMul
+        from pydyn.data_types.scalars import Scalar
+        if type(other) == float or type(other) == int:
+            other = Scalar('(' + str(other) + ')', value=other, attr=['Constant'])
         if other.type == Expression.SCALAR:
             return SMMul(self, other)
         elif other.type == Expression.VECTOR:
