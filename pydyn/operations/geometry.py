@@ -85,18 +85,19 @@ class Dot(ScalarExpr, BinaryNode):
         self.isConstant = self.left.isConstant and self.right.isConstant
         if self.left.isZero or self.right.isZero:
             self.isConstant = True
+        self.isZero = self.left.isZero or self.right.isZero
 
     def __str__(self):
         return 'Dot(' + self.left.__str__() + ',' + self.right.__str__() + ')'
 
     def delta(self):
-        from pydyn.operations.multiplication import MVMul
+        from pydyn.operations.multiplication import MVMul, Mul
         from pydyn.operations.addition import Add
         if isinstance(self.right, MVMul):
-            #     if ((m.isInstanceOf[SymmetricMatrix]) & & (
-            #             a == b)) Add(Mul(NumScalar(2), Dot(a.delta(), MVMul(m, b))), Dot(a, MVMul(m.delta(), b)))
-            #     else Dot(a.delta(), MVMul(m, b)) + Dot(a, MVMul(m, b).delta())
-            raise NotImplementedError
+            if self.right.left.isSymmetric and self.left == self.right.right:
+                return Add(Dot(self.left.delta(), self.right)*2, Dot(self.left, MVMul(self.right.left.delta(), self.right.right)))
+            else:
+                return Add(Dot(self.left.delta(), self.right), Dot(self.left, self.right.delta()))
         else:
             if self.left.isConstant and not self.right.isConstant:
                 return Dot(self.left, self.right.delta())
@@ -123,6 +124,7 @@ class Cross(VectorExpr, BinaryNode):
             self.type = Expression.VECTOR
         else:
             raise ExpressionMismatchError
+        self.isZero = self.left.isZero or self.left.isZero
 
     def __str__(self):
         return 'Cross(' + self.left.__str__() + ',' + self.right.__str__() + ')'

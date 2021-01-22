@@ -117,3 +117,16 @@ class Expr(object):
 
     def has(self, elem):
         return elem.__str__() in self.__str__()
+
+
+class Manifold(object):
+    def __init__(self):
+        self.isManifold = True
+        self.tangent_vector = None
+        self.variation_vector = None
+
+    def get_variation_vector(self):
+        raise NotImplementedError
+
+    def get_tangent_vector(self):
+        raise NotImplementedError

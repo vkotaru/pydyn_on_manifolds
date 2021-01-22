@@ -11,7 +11,7 @@ class Transpose(Expr, UnaryNode):
             self.type = expr.type
 
     def __str__(self):
-        return self.expr.__str__() + '\''
+        return '('+self.expr.__str__() + ')\''
 
     def __add__(self, other):
         from pydyn.operations.addition import Add, VAdd, MAdd

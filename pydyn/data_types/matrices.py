@@ -1,5 +1,5 @@
 import numpy as np
-from pydyn.data_types.expr import Expression, Expr
+from pydyn.data_types.expr import Expression, Expr, Manifold
 from pydyn.operations.transpose import Transpose
 from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
 
@@ -46,7 +46,14 @@ class Matrix(MatrixExpr):
             self.value = np.empty(size, dtype='object')
         else:
             self.value = value
-        self.attr = attr
+        if attr is None:
+            self.attr = []
+        else:
+            self.attr = attr
+        if 'SymmetricMatrix' in self.attr:
+            self.isSymmetric = True
+        else:
+            self.isSymmetric = False
 
     def __str__(self):
         return self.name
@@ -83,6 +90,27 @@ class SkewSymmMatrix(Matrix):
     def __init__(self):
         super().__init__()
         self.attr.append('SkewSymmetry')
+
+
+class SO3(Matrix, Manifold):
+    def __init__(self, s=None, size=(3, 3), value=None, attr=None):
+        super().__init__(s, size, value, attr)
+        self.tangent_vector = 'Omega_{' + self.name + '}'
+        self.variation_vector = 'eta_{' + self.name + '}'
+        self.attr.append('Manifold')
+
+    def delta(self):
+        from pydyn.operations.multiplication import MMMul
+        from pydyn.operations.geometry import Hat
+        return MMMul(self, Hat(self.get_variation_vector()))
+
+    def get_tangent_vector(self):
+        from pydyn.data_types.vectors import Vector
+        return Vector(self.tangent_vector)
+
+    def get_variation_vector(self):
+        from pydyn.data_types.vectors import Vector
+        return Vector(self.variation_vector)
 
 
 def getMatrices(input):

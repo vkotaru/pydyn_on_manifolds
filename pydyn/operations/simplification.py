@@ -182,7 +182,14 @@ def simplify(expr):
             elif expr.left.value == 0:
                 return simplify(expr.right)
             else:
-                return Add(simplify(expr.left), simplify(expr.right))
+                if expr.left.isZero and expr.right.isZero:
+                    return Scalar('0', value=0, attr=['Constant', 'Zero'])
+                elif expr.left.isZero:
+                    return simplify(expr.right)
+                elif expr.right.isZero:
+                    return simplify(expr.left)
+                else:
+                    return Add(simplify(expr.left), simplify(expr.right))
 
         elif isinstance(expr, Mul):
             if has_zeros(expr):

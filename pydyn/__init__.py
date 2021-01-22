@@ -10,7 +10,7 @@ del sys
 
 from .data_types.scalars import Scalar, getScalars
 from .data_types.vectors import Vector, getVectors
-from .data_types.matrices import Matrix, getMatrices
+from .data_types.matrices import Matrix, SO3, getMatrices
 
 from .operations.addition import Add, VAdd, MAdd
 from .operations.multiplication import Mul, MMMul, MVMul, SMMul, SVMul, VVMul
