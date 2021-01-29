@@ -25,6 +25,7 @@ class Expr(object):
         self.isZero = False
         self.isOnes = False
         self.isUnitNorm = False  # TODO add derivation dependency  # TODO add derivation level
+        self.isManifold = False
 
     @property
     def name(self):
@@ -56,8 +57,8 @@ class Expr(object):
 
     @attr.setter
     def attr(self, attributes):
-        self._attr = attributes
         if attributes is not None:
+            self._attr = attributes
             if 'Zero' in attributes:
                 self.isZero = True
                 self.isConstant = True
@@ -70,6 +71,10 @@ class Expr(object):
                 self.isOnes = False
             if 'Constant' in attributes:
                 self.isConstant = True
+            if 'Manifold' in attributes:
+                self.isManifold = True
+        else:
+            self._attr = []
 
     @property
     def type(self):

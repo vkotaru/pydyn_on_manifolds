@@ -1,6 +1,7 @@
 from pydyn.operations.multiplication import Mul, MVMul
 from pydyn.operations.addition import Add
 from pydyn.operations.geometry import Dot, Cross
+from pydyn.operations.binary_tree import is_member
 
 
 def col(_scalar, _vector):
@@ -16,8 +17,17 @@ def col(_scalar, _vector):
         return col(_scalar.left, _vector) * col(_scalar.right, _vector)
 
     elif isinstance(_scalar, Dot):
-        # POTENTIAL ENERGY
-        if isinstance(_scalar.right, MVMul):
+
+        if _scalar.right == _vector:
+            return Dot(_scalar.right, _scalar.left)
+
+        elif _scalar.left == _vector:
+            return _scalar
+
+        elif not is_member(_scalar.left, _vector) and not is_member(_scalar.right, _vector):
+            return _scalar
+
+        elif isinstance(_scalar.right, MVMul):
             raise NotImplementedError
 
         elif isinstance(_scalar.left, MVMul):
@@ -60,10 +70,7 @@ def col(_scalar, _vector):
                 return _scalar
 
         else:
-            if _scalar.right == _vector:
-                return Dot(_scalar.right, _scalar.left)
-            else:
-                return _scalar
+            return _scalar
 
     else:
         return _scalar

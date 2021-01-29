@@ -45,13 +45,13 @@ def expand_scalar(expr):
             u, v = expr.right.left, expr.right.right
             return expand(Dot(x, u)) + expand(Dot(x, v)) + expand(Dot(y, u)) + expand(Dot(y, v))
 
-        elif isinstance(expr.left, VAdd):
+        elif isinstance(expr.right, VAdd):
             """x.(u+v) = x.u + x.v"""
             x = expr.left
             u, v = expr.right.left, expr.right.right
             return expand(Dot(x, u)) + expand(Dot(x, v))
 
-        elif isinstance(expr.right, VAdd):
+        elif isinstance(expr.left, VAdd):
             """(x+y).u = x.u + y.u"""
             x, y = expr.left.left, expr.left.right
             u = expr.right

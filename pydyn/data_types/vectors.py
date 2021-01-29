@@ -44,7 +44,7 @@ class VectorExpr(Expr):
 
 
 class Vector(VectorExpr):
-    def __init__(self, s=None, size=(3,), value=None, attr=None):
+    def __init__(self, s, size=(3,), value=None, attr=None):
         super().__init__()
         self.name = s
         self.size = size
@@ -84,6 +84,19 @@ class Vector(VectorExpr):
                 return Vector(s=new_s, size=self.size)
             else:
                 return Vector(s='int_' + s, size=self.size)
+
+
+class TSO3(Vector):
+    """TSO(3) Tangent space of SO3 manifold"""
+    def __init__(self, s, SO3=None):
+        super().__init__(s, value=None, attr=None)
+        self.SO3 = SO3
+        self.attr.append('TangentVector')
+
+    def delta(self):
+        from pydyn.operations.geometry import Hat
+        eta = self.SO3.get_variation_vector()
+        return Hat(self) * eta + eta.diff()
 
 
 def getVectors(input):

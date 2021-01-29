@@ -130,7 +130,7 @@ class Cross(VectorExpr, BinaryNode):
         return 'Cross(' + self.left.__str__() + ',' + self.right.__str__() + ')'
 
 
-class Hat(VectorExpr, UnaryNode):
+class Hat(MatrixExpr, UnaryNode):
     """
     Hat map: Rn to LieGroup G
     """

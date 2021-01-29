@@ -95,9 +95,13 @@ class SkewSymmMatrix(Matrix):
 class SO3(Matrix, Manifold):
     def __init__(self, s=None, size=(3, 3), value=None, attr=None):
         super().__init__(s, size, value, attr)
+        super(Manifold, self).__init__()
         self.tangent_vector = 'Omega_{' + self.name + '}'
         self.variation_vector = 'eta_{' + self.name + '}'
-        self.attr.append('Manifold')
+        if attr is None:
+            attr = []
+        attr.append('Manifold')
+        self.attr = attr
 
     def delta(self):
         from pydyn.operations.multiplication import MMMul
@@ -105,13 +109,16 @@ class SO3(Matrix, Manifold):
         return MMMul(self, Hat(self.get_variation_vector()))
 
     def get_tangent_vector(self):
-        from pydyn.data_types.vectors import Vector
-        return Vector(self.tangent_vector)
+        from pydyn.data_types.vectors import TSO3
+        return TSO3(self.tangent_vector, SO3=self)
 
     def get_variation_vector(self):
         from pydyn.data_types.vectors import Vector
         return Vector(self.variation_vector)
 
+
+ZeroMatrix = Matrix('0', attr=['Constant', 'Zero'])
+IdentityMatrix = Matrix('I', attr=['Constant', 'Identity'])
 
 def getMatrices(input):
     if isinstance(input, list):

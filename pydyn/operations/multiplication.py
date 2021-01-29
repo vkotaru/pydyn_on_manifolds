@@ -42,6 +42,16 @@ class Mul(ScalarExpr, BinaryNode):
         else:
             return Mul(self.left.delta(), self.right) + Mul(self.left, self.right.delta())
 
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return Mul(self.left, self.right.diff())
+        elif not self.left.isConstant and self.right.isConstant:
+            return Mul(self.left.diff(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Scalar('0', attr=['Constant', 'Zero'])
+        else:
+            return Mul(self.left.diff(), self.right) + Mul(self.left, self.right.diff())
+
 
 class MVMul(VectorExpr, BinaryNode):
     """
@@ -88,6 +98,16 @@ class MVMul(VectorExpr, BinaryNode):
         else:
             return MVMul(self.left.delta(), self.right) + MVMul(self.left, self.right.delta())
 
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return MVMul(self.left, self.right.diff())
+        elif not self.left.isConstant and self.right.isConstant:
+            return MVMul(self.left.diff(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Vector('0', attr=['Constant', 'Zero'])
+        else:
+            return MVMul(self.left.diff(), self.right) + MVMul(self.left, self.right.diff())
+
 
 class MMMul(MatrixExpr, BinaryNode):
     """
@@ -126,6 +146,16 @@ class MMMul(MatrixExpr, BinaryNode):
             return Matrix('O', attr=['Constant', 'Zero'])
         else:
             return MMMul(self.left.delta(), self.right) + MMMul(self.left, self.right.delta())
+
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return MMMul(self.left, self.right.diff())
+        elif not self.left.isConstant and self.right.isConstant:
+            return MMMul(self.left.diff(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Matrix('O', attr=['Constant', 'Zero'])
+        else:
+            return MMMul(self.left.diff(), self.right) + MMMul(self.left, self.right.diff())
 
 
 class SVMul(VectorExpr, BinaryNode):
@@ -174,6 +204,16 @@ class SVMul(VectorExpr, BinaryNode):
             return Vector('0', attr=['Constant', 'Zero'])
         else:
             return SVMul(self.left.delta(), self.right) + SVMul(self.left, self.right.delta())
+
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return SVMul(self.left, self.right.diff())
+        elif not self.left.isConstant and self.right.isConstant:
+            return SVMul(self.left.diff(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Vector('0', attr=['Constant', 'Zero'])
+        else:
+            return SVMul(self.left.diff(), self.right) + SVMul(self.left, self.right.diff())
 
 
 class SMMul(MatrixExpr, BinaryNode):
@@ -224,6 +264,16 @@ class SMMul(MatrixExpr, BinaryNode):
             return Matrix('O', attr=['Constant', 'Zero'])
         else:
             return SMMul(self.left.delta(), self.right) + SMMul(self.left, self.right.delta())
+
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return SMMul(self.left, self.right.diff())
+        elif not self.left.isConstant and self.right.isConstant:
+            return SMMul(self.left.diff(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Matrix('O', attr=['Constant', 'Zero'])
+        else:
+            return SMMul(self.left.diff(), self.right) + SMMul(self.left, self.right.diff())
 
 
 class VVMul(Expr, BinaryNode):
@@ -296,3 +346,18 @@ class VVMul(Expr, BinaryNode):
                 raise UndefinedCaseError
         else:
             return VVMul(self.left.delta(), self.right) + VVMul(self.left, self.right.delta())
+
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return VVMul(self.left, self.right.diff())
+        elif not self.left.isConstant and self.right.isConstant:
+            return VVMul(self.left.diff(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            if self.type == Expression.SCALAR:
+                return Scalar('0', attr=['Constant', 'Zero'])
+            elif self.type == Expression.MATRIX:
+                return Matrix('O', attr=['Constant', 'Zero'])
+            else:
+                raise UndefinedCaseError
+        else:
+            return VVMul(self.left.diff(), self.right) + VVMul(self.left, self.right.diff())

@@ -41,10 +41,11 @@ def ibp(_expr, _expr_int):
 
 
 def integrate_by_parts_vectors(expr, vectors):
+    # TODO update and clean this function
     expr = expand(expr)
     expr = full_simplify(expr)
     for vector in vectors:
-        expr = col(expr, vector)
+        expr = col(expr, vector) # TODO clean and update this function
         expr = ibp(expr, vector)
         expr = full_simplify(expr)
 

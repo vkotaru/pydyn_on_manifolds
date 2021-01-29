@@ -12,17 +12,24 @@ def compute_eom(lagrangian, inf_work, variables):
     # taking variation of lagrangian
     dL = lagrangian.delta()
     # infinitesimal action integral
+
     dS = dL + inf_work
     dS = full_simplify(dS)
 
-    # integration by parts
+    # gather the variations (vectors)
     variation_vectors = []
-    vector_dots = []
-    for v in variables[1]:
-        variation_vectors.append(v.variation_vector())
-        vector_dots.append(v.variation_vector().diff())
+    variation_vector_dots = []
+    for vec in variables[1]:
+        x = vec.get_variation_vector()
+        variation_vectors.append(x)
+        variation_vector_dots.append(x.diff())
 
-    dS = integrate_by_parts_vectors(dS, vector_dots)
+    for mat in variables[2]:
+        x = mat.get_variation_vector()
+        variation_vectors.append(x)
+        variation_vector_dots.append(x.diff())
+
+    dS = integrate_by_parts_vectors(dS, variation_vector_dots)
 
     # simplify Tree
     dS = expand(dS)
