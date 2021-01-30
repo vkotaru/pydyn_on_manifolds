@@ -1,4 +1,4 @@
-from pydyn.data_types.expr import Expression
+from pydyn.base.expr import Expression
 from pydyn.operations.collection import col
 from pydyn.operations.expansion import expand
 from pydyn.operations.simplification import full_simplify

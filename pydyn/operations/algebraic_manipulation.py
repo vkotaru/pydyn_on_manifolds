@@ -1,7 +1,7 @@
 from pydyn.operations.transpose import Transpose
-from pydyn.data_types.matrices import Matrix, ZeroMatrix
-from pydyn.data_types.vectors import Vector
-from pydyn.data_types.expr import Expression
+from pydyn.base.matrices import Matrix, ZeroMatrix
+from pydyn.base.vectors import Vector
+from pydyn.base.expr import Expression
 from pydyn.utils.errors import UndefinedCaseError
 from pydyn.operations.addition import Add, VAdd, MAdd
 from pydyn.operations.multiplication import Mul, SVMul, SMMul, VVMul, MVMul, MMMul

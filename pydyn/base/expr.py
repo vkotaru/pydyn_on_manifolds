@@ -21,12 +21,17 @@ class Expr(object):
         self._size = None
         self._type = None
         self._attr = None
+
+        # expr attributes
         self.isConstant = False
         self.isZero = False
         self.isOnes = False
         self.isUnitNorm = False  # TODO add derivation dependency  # TODO add derivation level
         self.isManifold = False
         self.isSymmetric = False
+        self.isNumeric = False
+
+        self.dot = 0 # derivative level # TODO
 
     @property
     def name(self):
@@ -43,6 +48,8 @@ class Expr(object):
     @value.setter
     def value(self, val):
         self._value = val
+        if val is not None:
+            self.isNumeric = True
 
     @property
     def size(self):

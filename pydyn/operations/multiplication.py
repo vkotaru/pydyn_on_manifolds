@@ -1,9 +1,9 @@
 from pydyn import Add, MAdd
-from pydyn.data_types.matrices import Matrix, MatrixExpr
-from pydyn.data_types.expr import Expr, Expression
-from pydyn.data_types.scalars import ScalarExpr, Scalar
-from pydyn.data_types.vectors import VectorExpr, Vector
-from pydyn.operations.nodes import BinaryNode
+from pydyn.base.matrices import Matrix, MatrixExpr
+from pydyn.base.expr import Expr, Expression
+from pydyn.base.scalars import ScalarExpr, Scalar
+from pydyn.base.vectors import VectorExpr, Vector
+from pydyn.base.nodes import BinaryNode
 from pydyn.operations.transpose import Transpose
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
 

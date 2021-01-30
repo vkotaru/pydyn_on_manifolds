@@ -1,5 +1,5 @@
 import numpy as np
-from pydyn.data_types.expr import Expression, Expr, Manifold
+from pydyn.base.expr import Expression, Expr, Manifold
 from pydyn.operations.transpose import Transpose
 from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
 
@@ -21,7 +21,7 @@ class MatrixExpr(Expr):
 
     def __mul__(self, other):
         from pydyn.operations.multiplication import SMMul, MVMul, MMMul
-        from pydyn.data_types.scalars import Scalar
+        from pydyn.base.scalars import Scalar
         if type(other) == float or type(other) == int:
             other = Scalar('(' + str(other) + ')', value=other, attr=['Constant'])
         if other.type == Expression.SCALAR:
@@ -109,11 +109,11 @@ class SO3(Matrix, Manifold):
         return MMMul(self, Hat(self.get_variation_vector()))
 
     def get_tangent_vector(self):
-        from pydyn.data_types.vectors import TSO3
+        from pydyn.base.vectors import TSO3
         return TSO3(self.tangent_vector, SO3=self)
 
     def get_variation_vector(self):
-        from pydyn.data_types.vectors import Vector
+        from pydyn.base.vectors import Vector
         return Vector(self.variation_vector)
 
     def diff(self):

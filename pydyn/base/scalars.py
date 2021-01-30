@@ -1,4 +1,4 @@
-from pydyn.data_types.expr import Expr, Expression
+from pydyn.base.expr import Expr, Expression
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
 
 
@@ -17,10 +17,7 @@ class ScalarExpr(Expr):
 
     def __add__(self, other):
         from pydyn.operations.addition import Add
-        if other.type == Expression.SCALAR:
-            return Add(self, other)
-        else:
-            raise ExpressionMismatchError('Add', self.type, other.type)
+        return Add(self, other)
 
     def __sub__(self, other):
         from pydyn.operations.addition import Add
@@ -88,6 +85,19 @@ class Scalar(ScalarExpr):
 
     def has(self, elem):
         return self.name == elem.name
+
+
+Zero = Scalar('0', value=0, attr=['Constant', 'Zero'])
+One = Scalar('1', value=1, attr=['Constant', 'Ones'])
+
+
+def Number(value):
+    if type(value) == float or type(value) == int:
+        return Scalar('(' + str(value) + ')', value=value, attr=['Constant'])
+    elif isinstance(value, str):
+        return Scalar(s=value, attr=['Constant'])
+    else:
+        raise Exception('Input to number should be int/float/string')
 
 
 def getScalars(input, attr=None):

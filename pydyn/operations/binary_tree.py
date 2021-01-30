@@ -1,9 +1,9 @@
 from pydyn.operations.addition import Add, VAdd, MAdd
 from pydyn.operations.multiplication import SVMul, SMMul
-from pydyn.data_types.matrices import MatrixExpr
-from pydyn.data_types.scalars import ScalarExpr
-from pydyn.data_types.vectors import VectorExpr
-from pydyn.operations.nodes import BinaryNode
+from pydyn.base.matrices import MatrixExpr
+from pydyn.base.scalars import ScalarExpr
+from pydyn.base.vectors import VectorExpr
+from pydyn.base.nodes import BinaryNode
 
 
 def is_leaf(expr):

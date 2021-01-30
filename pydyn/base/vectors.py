@@ -1,5 +1,5 @@
 import numpy as np
-from pydyn.data_types.expr import Expression, Expr
+from pydyn.base.expr import Expression, Expr
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
 
 
@@ -20,7 +20,7 @@ class VectorExpr(Expr):
 
     def __mul__(self, other):
         from pydyn.operations.multiplication import SVMul, VVMul, MVMul
-        from pydyn.data_types.scalars import Scalar
+        from pydyn.base.scalars import Scalar
         if type(other) == float or type(other) == int:
             other = Scalar('(' + str(other) + ')', value=other, attr=['Constant'])
         if other.type == Expression.SCALAR:
@@ -98,8 +98,9 @@ class TSO3(Vector):
         eta = self.SO3.get_variation_vector()
         return Hat(self) * eta + eta.diff()
 
+ZeroVector = Vector(s='0v', attr=['Constant, Zero'])
 
-def getVectors(input):
+def getVectors(input, attr=None):
     if isinstance(input, list):
         vars = input
     elif isinstance(input, str):
@@ -108,5 +109,5 @@ def getVectors(input):
         return None
     s = []
     for v in vars:
-        s.append(Vector(v))
+        s.append(Vector(v, attr=attr))
     return tuple(s)

@@ -2,9 +2,9 @@ from pydyn.operations.addition import Add, MAdd, VAdd
 from pydyn.operations.binary_tree import has_nested_scalars
 from pydyn.operations.multiplication import Mul, SVMul, MVMul, SMMul, MMMul
 from pydyn.operations.geometry import Dot, Cross
-from pydyn.data_types.matrices import MatrixExpr
-from pydyn.data_types.scalars import ScalarExpr, Scalar
-from pydyn.data_types.vectors import VectorExpr
+from pydyn.base.matrices import MatrixExpr
+from pydyn.base.scalars import ScalarExpr, Scalar
+from pydyn.base.vectors import VectorExpr
 from pydyn.operations.expansion import expand
 
 

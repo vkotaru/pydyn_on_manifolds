@@ -1,4 +1,4 @@
-from pydyn.data_types.expr import Expr
+from pydyn.base.expr import Expr
 
 
 class Summation(Expr):

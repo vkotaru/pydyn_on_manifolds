@@ -1,5 +1,5 @@
-from pydyn.data_types.expr import Expr, Expression
-from pydyn.operations.nodes import UnaryNode
+from pydyn.base.expr import Expr, Expression
+from pydyn.base.nodes import UnaryNode
 from pydyn.utils.errors import ExpressionMismatchError
 
 

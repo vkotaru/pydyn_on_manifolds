@@ -2,9 +2,9 @@ from pydyn.operations.binary_tree import has_nested_add
 from pydyn.operations.geometry import Dot, Cross, Vee
 from pydyn.operations.addition import Add, VAdd, MAdd
 from pydyn.operations.multiplication import Mul, SMMul, SVMul, MVMul, VVMul, MMMul
-from pydyn.data_types.matrices import MatrixExpr
-from pydyn.data_types.scalars import ScalarExpr
-from pydyn.data_types.vectors import VectorExpr
+from pydyn.base.matrices import MatrixExpr
+from pydyn.base.scalars import ScalarExpr
+from pydyn.base.vectors import VectorExpr
 from pydyn.utils.errors import UndefinedCaseError
 
 
