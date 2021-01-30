@@ -76,10 +76,10 @@ def expand_vector(expr):
     elif isinstance(expr, MVMul):
         if isinstance(expr.left, MAdd):
             """(A+B)x = Ax+Bx"""
-            return expand(SVMul(expr.left.left, expr.right)) + expand(SVMul(expr.left.right, expr.right))
+            return expand(MVMul(expr.left.left, expr.right)) + expand(MVMul(expr.left.right, expr.right))
         elif isinstance(expr.right, VAdd):
             """A(x+y) = Ax + Ay"""
-            return expand(SVMul(expr.left, expr.right.left)) + expand(SVMul(expr.left, expr.right.right))
+            return expand(MVMul(expr.left, expr.right.left)) + expand(MVMul(expr.left, expr.right.right))
         else:
             if has_nested_add(expr):
                 return expand(MVMul(expand(expr.left), expand(expr.right)))

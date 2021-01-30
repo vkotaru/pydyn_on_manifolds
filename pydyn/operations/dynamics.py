@@ -48,6 +48,8 @@ def separate_variations(inf_action_integral, variation_vectors):
     _dict = {}
 
     for vec in variation_vectors:
-        _dict[vec.__str__()] = (vec, extract_coeff(inf_action_integral, vec))
+        dyn_eqn = extract_coeff(inf_action_integral, vec)
+        dyn_eqn = full_simplify(dyn_eqn)
+        _dict[vec.__str__()] = (vec, dyn_eqn)
 
     return _dict

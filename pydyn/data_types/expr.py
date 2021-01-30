@@ -26,6 +26,7 @@ class Expr(object):
         self.isOnes = False
         self.isUnitNorm = False  # TODO add derivation dependency  # TODO add derivation level
         self.isManifold = False
+        self.isSymmetric = False
 
     @property
     def name(self):

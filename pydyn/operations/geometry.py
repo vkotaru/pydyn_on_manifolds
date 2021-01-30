@@ -147,6 +147,9 @@ class Hat(MatrixExpr, UnaryNode):
     def __str__(self):
         return 'Hat(' + self.expr.__str__() + ')'
 
+    def delta(self):
+        return Hat(self.expr.delta())
+
 
 class Vee(MatrixExpr, UnaryNode):
     """Vee map: LieGroup G to Rn"""

@@ -71,7 +71,7 @@ class Vector(VectorExpr):
         else:
             return Vector(s='dot_' + self.name, size=self.size)
 
-    def variation_vector(self):
+    def get_variation_vector(self):
         return self.delta()
 
     def integrate(self):
