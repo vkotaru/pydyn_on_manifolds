@@ -17,7 +17,7 @@ def rigid_pendulum():
     x = R * rho
     v = x.diff()
 
-    KE = Dot(Om, J * Om) * 0.5 + m * Dot(v, v) * 0.5
+    KE = Dot(Om, J * Om) * 0.5
     PE = m * g * Dot(x, e3)
     L = KE - PE
 
