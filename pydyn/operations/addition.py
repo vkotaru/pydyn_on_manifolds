@@ -1,13 +1,12 @@
-from pydyn.data_types.expr import Expression, Expr
+from pydyn.data_types.expr import Expression
 from pydyn.data_types.matrices import MatrixExpr
 from pydyn.data_types.scalars import ScalarExpr, Scalar
 from pydyn.data_types.vectors import VectorExpr
 from pydyn.operations.nodes import BinaryNode
 from pydyn.utils.errors import ExpressionMismatchError
-import pydyn.data_types
 
 
-class Add(ScalarExpr, BinaryNode):
+class Add(BinaryNode, ScalarExpr):
     """Scalar Addition"""
 
     def __init__(self, l, r):
@@ -40,7 +39,7 @@ class Add(ScalarExpr, BinaryNode):
             return Add(self.left.delta(), self.right.delta())
 
 
-class VAdd(VectorExpr, BinaryNode):
+class VAdd(BinaryNode, VectorExpr):
     """Vector Addition"""
 
     def __init__(self, l, r):
@@ -73,7 +72,7 @@ class VAdd(VectorExpr, BinaryNode):
             return VAdd(self.left.delta(), self.right.delta())
 
 
-class MAdd(MatrixExpr, BinaryNode):
+class MAdd(BinaryNode, MatrixExpr):
     """Matrix Addition"""
 
     def __init__(self, l, r):

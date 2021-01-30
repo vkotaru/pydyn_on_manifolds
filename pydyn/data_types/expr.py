@@ -122,7 +122,7 @@ class Expr(object):
         raise NotImplementedError
 
     def has(self, elem):
-        return elem.__str__() in self.__str__()
+        return elem.__str__() == self.__str__()
 
 
 class Manifold(object):

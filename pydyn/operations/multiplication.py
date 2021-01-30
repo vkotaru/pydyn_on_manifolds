@@ -8,7 +8,7 @@ from pydyn.operations.transpose import Transpose
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
 
 
-class Mul(ScalarExpr, BinaryNode):
+class Mul(BinaryNode, ScalarExpr):
     """
     Scalar multiplication
     """
@@ -53,7 +53,7 @@ class Mul(ScalarExpr, BinaryNode):
             return Mul(self.left.diff(), self.right) + Mul(self.left, self.right.diff())
 
 
-class MVMul(VectorExpr, BinaryNode):
+class MVMul(BinaryNode, VectorExpr):
     """
     Matrix-Vector multiplication
     """
@@ -109,7 +109,7 @@ class MVMul(VectorExpr, BinaryNode):
             return MVMul(self.left.diff(), self.right) + MVMul(self.left, self.right.diff())
 
 
-class MMMul(MatrixExpr, BinaryNode):
+class MMMul(BinaryNode, MatrixExpr):
     """
     Matrix-Matrix multiplication
     """
@@ -158,7 +158,7 @@ class MMMul(MatrixExpr, BinaryNode):
             return MMMul(self.left.diff(), self.right) + MMMul(self.left, self.right.diff())
 
 
-class SVMul(VectorExpr, BinaryNode):
+class SVMul(BinaryNode, VectorExpr):
     """
     Scalar-Vector multiplication
     """
@@ -216,7 +216,7 @@ class SVMul(VectorExpr, BinaryNode):
             return SVMul(self.left.diff(), self.right) + SVMul(self.left, self.right.diff())
 
 
-class SMMul(MatrixExpr, BinaryNode):
+class SMMul(BinaryNode, MatrixExpr):
     """
     Scalar-Matrix Multiplication
     """

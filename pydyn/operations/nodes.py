@@ -4,6 +4,7 @@ class UnaryNode(object):
     """
 
     def __init__(self):
+        super().__init__()
         self._expr = None
 
     @property
@@ -14,12 +15,17 @@ class UnaryNode(object):
     def expr(self, e):
         self._expr = e
 
+    def has(self, elem):
+        return elem.__str__() == self.expr.__str__()
+
+
 class BinaryNode(object):
     """
     Binary Node used by addition, multiplication, dot, cross and other operators
     """
 
     def __init__(self):
+        super().__init__()
         self._left = None
         self._right = None
 
@@ -38,3 +44,6 @@ class BinaryNode(object):
     @right.setter
     def right(self, r):
         self._right = r
+
+    def has(self, elem):
+        return self.left.has(elem) or self.right.has(elem)

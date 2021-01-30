@@ -3,7 +3,7 @@ from pydyn.operations.multiplication import SVMul, SMMul
 from pydyn.data_types.matrices import MatrixExpr
 from pydyn.data_types.scalars import ScalarExpr
 from pydyn.data_types.vectors import VectorExpr
-from pydyn.operations.nodes import BinaryNode, UnaryNode
+from pydyn.operations.nodes import BinaryNode
 
 
 def is_leaf(expr):

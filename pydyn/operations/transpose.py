@@ -1,6 +1,6 @@
 from pydyn.data_types.expr import Expr, Expression
 from pydyn.operations.nodes import UnaryNode
-from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
+from pydyn.utils.errors import ExpressionMismatchError
 
 
 class Transpose(Expr, UnaryNode):

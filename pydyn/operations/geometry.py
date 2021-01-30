@@ -7,7 +7,7 @@ from pydyn.operations.nodes import UnaryNode, BinaryNode
 from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
 
 
-class Delta(Expr, UnaryNode):
+class Delta(UnaryNode, Expr):
     """
     Variation operator
     """
@@ -69,7 +69,7 @@ class Delta(Expr, UnaryNode):
         return Delta(self.expr.integrate())
 
 
-class Dot(ScalarExpr, BinaryNode):
+class Dot(BinaryNode, ScalarExpr):
     """
     Dot product of vectors
     """
@@ -91,7 +91,7 @@ class Dot(ScalarExpr, BinaryNode):
         return 'Dot(' + self.left.__str__() + ',' + self.right.__str__() + ')'
 
     def delta(self):
-        from pydyn.operations.multiplication import MVMul, Mul
+        from pydyn.operations.multiplication import MVMul
         from pydyn.operations.addition import Add
         if isinstance(self.right, MVMul):
             if self.right.left.isSymmetric and self.left == self.right.right:
@@ -111,7 +111,7 @@ class Dot(ScalarExpr, BinaryNode):
                 return Add(Dot(self.left.delta(), self.right), Dot(self.left, self.right.delta()))
 
 
-class Cross(VectorExpr, BinaryNode):
+class Cross(BinaryNode, VectorExpr):
     """
     Cross product of 3x1 vectors
     """
@@ -130,7 +130,7 @@ class Cross(VectorExpr, BinaryNode):
         return 'Cross(' + self.left.__str__() + ',' + self.right.__str__() + ')'
 
 
-class Hat(MatrixExpr, UnaryNode):
+class Hat(UnaryNode, MatrixExpr):
     """
     Hat map: Rn to LieGroup G
     """
@@ -151,7 +151,7 @@ class Hat(MatrixExpr, UnaryNode):
         return Hat(self.expr.delta())
 
 
-class Vee(MatrixExpr, UnaryNode):
+class Vee(UnaryNode, MatrixExpr):
     """Vee map: LieGroup G to Rn"""
 
     def __init__(self, expr):
