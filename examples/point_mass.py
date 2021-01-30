@@ -47,7 +47,7 @@ def two_point_masses():
 
     v1, v2 = x1.diff(), x2.diff()
     # computing energies
-    PE = m1 * x1.dot(g * e3) + m2*x2.dot(g*e3)
+    PE = m1 * x1.dot((g * e3)) + m2*x2.dot(g*e3)
     KE = m1 * Dot(v1, v1) * 0.5 + m2*Dot(v2,v2)*0.5
 
     # Lagrangian

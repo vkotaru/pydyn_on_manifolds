@@ -31,7 +31,7 @@ class Expr(object):
         self.isSymmetric = False
         self.isNumeric = False
 
-        self.dot = 0 # derivative level # TODO
+        self.derv_num = 0 # derivative level # TODO
 
     @property
     def name(self):

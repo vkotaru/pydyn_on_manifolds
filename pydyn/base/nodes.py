@@ -1,4 +1,14 @@
-class UnaryNode(object):
+class Node(object):
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self):
+        raise NotImplementedError
+
+    def has(self, elem):
+        raise NotImplementedError
+
+class UnaryNode(Node):
     """
     Unary node used by transpose, hat, vee, and such operators
     """
@@ -19,15 +29,15 @@ class UnaryNode(object):
         return elem.__str__() == self.expr.__str__()
 
 
-class BinaryNode(object):
+class BinaryNode(Node):
     """
     Binary Node used multiplication, dot, cross and other operators
     """
 
-    def __init__(self):
+    def __init__(self, l=None, r=None):
         super().__init__()
-        self._left = None
-        self._right = None
+        self.left = l
+        self.right = r
 
     @property
     def left(self):
@@ -49,7 +59,7 @@ class BinaryNode(object):
         return self.left.has(elem) or self.right.has(elem)
 
 
-class NaryNode(object):
+class NaryNode(Node):
     """N-ary node for addition"""
     def __init__(self, *args):
         super().__init__()

@@ -2,6 +2,8 @@ from pydyn import *
 from pydyn.operations.addition import Add, VAdd, MAdd
 from pydyn.base.scalars import getScalars
 
+
+add = Add()
 a, b, c, d, e= getScalars('a b c d e')
 f, g = getScalars('f g', attr=['Constant'])
 

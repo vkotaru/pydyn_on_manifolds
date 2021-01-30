@@ -13,10 +13,11 @@ class VectorExpr(Expr):
 
     def __add__(self, other):
         from pydyn.operations.addition import VAdd
-        if other.type == Expression.VECTOR:
-            return VAdd(self, other)
-        else:
-            raise ExpressionMismatchError
+        return VAdd(self, other)
+
+    def __iadd__(self, other):
+        from pydyn.operations.addition import VAdd
+        return VAdd(self, other)
 
     def __mul__(self, other):
         from pydyn.operations.multiplication import SVMul, VVMul, MVMul
@@ -34,7 +35,6 @@ class VectorExpr(Expr):
 
     def dot(self, other):
         from pydyn.operations.geometry import Dot
-
         return Dot(self, other)
 
     def cross(self, other):

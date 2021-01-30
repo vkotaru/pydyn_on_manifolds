@@ -19,6 +19,10 @@ class ScalarExpr(Expr):
         from pydyn.operations.addition import Add
         return Add(self, other)
 
+    def __iadd__(self, other):
+        from pydyn.operations.addition import Add
+        return Add(self, other)
+
     def __sub__(self, other):
         from pydyn.operations.addition import Add
         from pydyn.operations.multiplication import Mul

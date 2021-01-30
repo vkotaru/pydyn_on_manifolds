@@ -14,17 +14,15 @@ class Mul(BinaryNode, ScalarExpr):
     """
 
     def __init__(self, l, r):
-        super().__init__()
         if type(l) == float or type(l) == int:
             l = Scalar('(' + str(l) + ')', value=l, attr=['Constant'])
         if type(r) == float or type(r) == int:
             r = Scalar('(' + str(r) + ')', value=r, attr=['Constant'])
         if l.type == Expression.SCALAR and r.type == Expression.SCALAR:
-            self.left = l
-            self.right = r
+            super().__init__(l, r)
             self.type = l.type
         else:
-            raise ExpressionMismatchError
+            raise Exception('Input to ', type(self).__name__, 'should be Expression', str(self.type))
         self.isConstant = self.left.isConstant and self.right.isConstant
         self.isZero = self.left.isZero or self.right.isZero
 

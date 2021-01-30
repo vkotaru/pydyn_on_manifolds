@@ -14,10 +14,11 @@ class MatrixExpr(Expr):
 
     def __add__(self, other):
         from pydyn.operations.addition import MAdd
-        if other.type == Expression.MATRIX:
-            return MAdd(self, other)
-        else:
-            raise ExpressionMismatchError
+        return MAdd(self, other)
+
+    def __iadd__(self, other):
+        from pydyn.operations.addition import MAdd
+        return MAdd(self, other)
 
     def __mul__(self, other):
         from pydyn.operations.multiplication import SMMul, MVMul, MMMul

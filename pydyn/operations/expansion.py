@@ -1,5 +1,5 @@
 from pydyn.operations.binary_tree import has_nested_add
-from pydyn.operations.geometry import Dot, Cross, Vee
+from pydyn.operations.geometry import Dot, Cross, Vee, Hat
 from pydyn.operations.addition import Add, VAdd, MAdd
 from pydyn.operations.multiplication import Mul, SMMul, SVMul, MVMul, VVMul, MMMul
 from pydyn.base.matrices import MatrixExpr
@@ -10,27 +10,33 @@ from pydyn.utils.errors import UndefinedCaseError
 
 def expand_scalar(expr):
     if isinstance(expr, Add):
-        return Add(expand(expr.left), expand(expr.right))
+        expanded_expr = Add()
+        for n in expr.nodes:
+            expanded_expr +=  expand(n)
+        return expanded_expr
 
     elif isinstance(expr, Mul):
         if isinstance(expr.left, Add) and isinstance(expr.right, Add):
             """(a+b)(c+d) = ac + ad + bc + bd"""
-            a, b = expr.left.left, expr.left.right
-            c, d = expr.right.left, expr.right.right
-            return expand(a * c) + expand(a * d) + expand(b * c) + expand(b * d)
+            expanded_expr = Add()
+            for nl in expr.left.nodes:
+                for nr in expr.right.nodes:
+                    expanded_expr += expand(nl*nr)
+            return expanded_expr
 
         elif isinstance(expr.left, Add):
             """(a+b)c = ac + bc"""
-            a, b = expr.left.left, expr.left.right
-            c = expr.right
-            return expand(a * c) + expand(b * c)
+            expanded_expr = Add()
+            for n in expr.left.nodes:
+                expanded_expr += expand(n*expr.right)
+            return expanded_expr
 
         elif isinstance(expr.right, Add):
             """a(b+c) = ab + ac"""
-            a = expr.left
-            b, c = expr.right.left, expr.right.right
-            return expand(a * b) + expand(a * c)
-            pass
+            expanded_expr = Add()
+            for n in expr.right.nodes:
+                expanded_expr += expand(expr.left*n)
+            return expanded_expr
 
         else:
             if has_nested_add(expr):
@@ -41,21 +47,25 @@ def expand_scalar(expr):
     elif isinstance(expr, Dot):
         if isinstance(expr.left, VAdd) and isinstance(expr.right, VAdd):
             """(x+y).(u+v) = x.u + x.v + y.u + y.v"""
-            x, y = expr.left.left, expr.left.right
-            u, v = expr.right.left, expr.right.right
-            return expand(Dot(x, u)) + expand(Dot(x, v)) + expand(Dot(y, u)) + expand(Dot(y, v))
+            expanded_expr = Add()
+            for nl in expr.left.nodes:
+                for nr in expr.right.nodes:
+                    expanded_expr += expand(Dot(nl, nr))
+            return expanded_expr
 
         elif isinstance(expr.right, VAdd):
             """x.(u+v) = x.u + x.v"""
-            x = expr.left
-            u, v = expr.right.left, expr.right.right
-            return expand(Dot(x, u)) + expand(Dot(x, v))
+            expanded_expr = Add()
+            for n in expr.right.nodes:
+                expanded_expr += expand(Dot(expr.left, n))
+            return expanded_expr
 
         elif isinstance(expr.left, VAdd):
             """(x+y).u = x.u + y.u"""
-            x, y = expr.left.left, expr.left.right
-            u = expr.right
-            return expand(Dot(x, u)) + expand(Dot(y, u))
+            expanded_expr = Add()
+            for n in expr.left.nodes:
+                expanded_expr += expand(Dot(n, expr.right))
+            return expanded_expr
 
         else:
             if has_nested_add(expr):
@@ -71,15 +81,26 @@ def expand_scalar(expr):
 
 def expand_vector(expr):
     if isinstance(expr, VAdd):
-        return expand(expr.left) + expand(expr.right)
+        expanded_expr = VAdd()
+        for n in expr.nodes:
+            expanded_expr +=  expand(n)
+        return expanded_expr
 
     elif isinstance(expr, MVMul):
         if isinstance(expr.left, MAdd):
             """(A+B)x = Ax+Bx"""
-            return expand(MVMul(expr.left.left, expr.right)) + expand(MVMul(expr.left.right, expr.right))
+            expanded_expr = VAdd()
+            for n in expr.left.nodes:
+                expanded_expr += expand(MVMul(n, expr.right))
+            return expanded_expr
+
         elif isinstance(expr.right, VAdd):
             """A(x+y) = Ax + Ay"""
-            return expand(MVMul(expr.left, expr.right.left)) + expand(MVMul(expr.left, expr.right.right))
+            expanded_expr = VAdd()
+            for n in expr.right.nodes:
+                expanded_expr += expand(MVMul(expr.left, n))
+            return expanded_expr
+
         else:
             if has_nested_add(expr):
                 return expand(MVMul(expand(expr.left), expand(expr.right)))
@@ -136,10 +157,13 @@ def expand_matrix(expr):
                 return expr
 
     elif isinstance(expr, SMMul):
-        pass
+        raise NotImplementedError
 
     elif isinstance(expr, VVMul):
         raise NotImplementedError
+
+    elif isinstance(expr, Hat):
+        return Hat(expand(expr.expr))
 
     return expr
 
