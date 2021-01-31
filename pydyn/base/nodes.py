@@ -1,3 +1,6 @@
+from pydyn.base.expr import Expression
+
+
 class Node(object):
     def __init__(self):
         super().__init__()
@@ -7,6 +10,7 @@ class Node(object):
 
     def has(self, elem):
         raise NotImplementedError
+
 
 class UnaryNode(Node):
     """
@@ -61,16 +65,30 @@ class BinaryNode(Node):
 
 class NaryNode(Node):
     """N-ary node for addition"""
+
     def __init__(self, *args):
         super().__init__()
         self._nodes = []
         for arg in args:
             if isinstance(arg, list) or isinstance(arg, tuple):
+                """If input argument is list or tuple iterate it through the elements"""
                 for a in arg:
                     if a.type == self.type:
                         self.nodes.append(a)
+                    elif isinstance(a, int) or isinstance(a, float):
+                        if self.type == Expression.SCALAR:
+                            from pydyn.base.scalars import Number
+                            self.nodes.append(Number(a))
+                        else:
+                            Exception('A numeric can only be added to Scalars, Not Vectors/Matrices ')
                     else:
                         raise Exception('Input to ', type(self).__name__, 'should be Expression', str(self.type))
+            elif isinstance(arg, int) or isinstance(arg, float):
+                if self.type == Expression.SCALAR:
+                    from pydyn.base.scalars import Number
+                    self.nodes.append(Number(arg))
+                else:
+                    Exception('A numeric can only be added to Scalars, Not Vectors/Matrices ')
             else:
                 if arg.type == self.type:
                     if isinstance(arg, type(self)):
@@ -101,7 +119,7 @@ class NaryNode(Node):
         self.nodes[ind] = elem
 
     @property
-    def N(self):
+    def n(self):
         """Number of nodes"""
         return len(self._nodes)
 

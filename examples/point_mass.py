@@ -61,5 +61,5 @@ def two_point_masses():
     print('done')
 
 if __name__ == "__main__":
-    two_point_masses()
-    # point_mass()
+    # two_point_masses()
+    point_mass()
