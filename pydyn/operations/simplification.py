@@ -11,8 +11,6 @@ from pydyn.operations.expansion import expand
 def pull(expr):
     """
     Function to pull scalar components out of vectors and matrices
-    :param expr:
-    :return:
     """
     if isinstance(expr, ScalarExpr):
         if isinstance(expr, Add):

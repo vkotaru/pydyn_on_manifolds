@@ -12,6 +12,8 @@ delta_sum_scalars = sum_scalars.delta()
 dot_sum_scalars = sum_scalars.diff()
 dot_sum2_ = Add(f,g).diff()
 scalar_scalar_mul = a * sum_scalars
+sum_scalars2 = sum_scalars.copy()
+sum_scalars2.replace_at(0, e)
 
 v, u = getVectors('u v', attr=['Constant'])
 x, y, z = getVectors(['x', 'y', 'z'])

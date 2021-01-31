@@ -97,14 +97,17 @@ class NaryNode(Node):
     def append(self, elem):
         self._nodes.append(elem)
 
+    def replace_at(self, ind, elem):
+        self.nodes[ind] = elem
+
     @property
     def N(self):
         """Number of nodes"""
         return len(self._nodes)
 
-    def __str__(self):
+    def get_str(self, optr_sym='+'):
         str = '('
         for n in self.nodes[:-1]:
-            str += n.__str__() + '+'
+            str += n.__str__() + optr_sym
         str += self.nodes[-1].__str__() + ')'
         return str

@@ -9,6 +9,9 @@ class Add(NaryNode, ScalarExpr):
 
     def __init__(self, *args):
         super().__init__(*args)
+        
+    def __str__(self):
+        return super().get_str('+')
 
     def delta(self):
         """variation"""
@@ -42,6 +45,9 @@ class VAdd(NaryNode, VectorExpr):
     def __init__(self, *args):
         super().__init__(*args)
 
+    def __str__(self):
+        return super().get_str('+')
+
     def delta(self):
         """variation"""
         deltas = []
@@ -73,6 +79,9 @@ class MAdd(NaryNode, MatrixExpr):
 
     def __init__(self, *args):
         super().__init__(*args)
+
+    def __str__(self):
+        return super().get_str('+')
 
     def delta(self):
         """variation"""
