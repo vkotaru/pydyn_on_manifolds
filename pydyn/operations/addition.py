@@ -38,6 +38,18 @@ class Add(BinaryNode, ScalarExpr):
         else:
             return Add(self.left.delta(), self.right.delta())
 
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return self.right.diff()
+        elif not self.left.isConstant and self.right.isConstant:
+            return self.left.diff()
+        elif self.left.isConstant and self.right.isConstant:
+            return Scalar('0', attr=['Constant', 'Zero'])
+        else:
+            return Add(self.left.diff(), self.right.diff())
+
+
+
 
 class VAdd(BinaryNode, VectorExpr):
     """Vector Addition"""
@@ -71,6 +83,15 @@ class VAdd(BinaryNode, VectorExpr):
         else:
             return VAdd(self.left.delta(), self.right.delta())
 
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return self.right.diff()
+        elif not self.left.isConstant and self.right.isConstant:
+            return self.left.diff()
+        elif self.left.isConstant and self.right.isConstant:
+            return Scalar('0', attr=['Constant', 'Zero'])
+        else:
+            return VAdd(self.left.diff(), self.right.diff())
 
 class MAdd(BinaryNode, MatrixExpr):
     """Matrix Addition"""
@@ -103,3 +124,13 @@ class MAdd(BinaryNode, MatrixExpr):
             return Scalar('0', attr=['Constant', 'Zero'])
         else:
             return MAdd(self.left.delta(), self.right.delta())
+
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return self.right.diff()
+        elif not self.left.isConstant and self.right.isConstant:
+            return self.left.diff()
+        elif self.left.isConstant and self.right.isConstant:
+            return Scalar('0', attr=['Constant', 'Zero'])
+        else:
+            return MAdd(self.left.diff(), self.right.diff())
