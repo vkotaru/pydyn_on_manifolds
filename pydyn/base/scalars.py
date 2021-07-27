@@ -1,8 +1,10 @@
+from abc import ABC
+
 from pydyn.base.expr import Expr, Expression
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
 
 
-class ScalarExpr(Expr):
+class ScalarExpr(Expr, ABC):
     """
     ScalarExpr class and its properties
     """
@@ -45,7 +47,7 @@ class ScalarExpr(Expr):
             raise UndefinedCaseError
 
 
-class Scalar(ScalarExpr):
+class Scalar(ScalarExpr, ABC):
     """
     Scalar Variable
     """

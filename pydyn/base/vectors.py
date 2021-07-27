@@ -1,9 +1,11 @@
+from abc import ABC
+
 import numpy as np
 from pydyn.base.expr import Expression, Expr
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
 
 
-class VectorExpr(Expr):
+class VectorExpr(Expr, ABC):
     def __init__(self):
         super().__init__()
         self.type = Expression.VECTOR
@@ -43,7 +45,7 @@ class VectorExpr(Expr):
         return Cross(self, other)
 
 
-class Vector(VectorExpr):
+class Vector(VectorExpr, ABC):
     def __init__(self, s, size=(3,), value=None, attr=None):
         super().__init__()
         self.name = s
@@ -86,8 +88,9 @@ class Vector(VectorExpr):
                 return Vector(s='int_' + s, size=self.size)
 
 
-class TSO3(Vector):
+class TSO3(Vector, ABC):
     """TSO(3) Tangent space of SO3 manifold"""
+
     def __init__(self, s, SO3=None):
         super().__init__(s, value=None, attr=None)
         self.SO3 = SO3
@@ -98,7 +101,9 @@ class TSO3(Vector):
         eta = self.SO3.get_variation_vector()
         return Hat(self) * eta + eta.diff()
 
+
 ZeroVector = Vector(s='0v', attr=['Constant, Zero'])
+
 
 def getVectors(input, attr=None):
     if isinstance(input, list):

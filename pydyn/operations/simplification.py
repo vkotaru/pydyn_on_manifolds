@@ -14,7 +14,10 @@ def pull(expr):
     """
     if isinstance(expr, ScalarExpr):
         if isinstance(expr, Add):
-            return pull(expr.left) + pull(expr.right)
+            pulled_expr = Add()
+            for n in expr.nodes:
+                pulled_expr += pull(n)
+            return pulled_expr
         elif isinstance(expr, Mul):
             return pull(expr.left) * pull(expr.right)
         elif isinstance(expr, Dot):
@@ -98,7 +101,10 @@ def pull(expr):
 
 def vector_rules(expr):
     if isinstance(expr, Add):
-        return vector_rules(expr.left) + vector_rules(expr.right)
+        ruled_expr = Add()
+        for n in expr.nodes:
+            ruled_expr += vector_rules(n)
+        return ruled_expr
     elif isinstance(expr, Mul):
         return vector_rules(expr.left) * vector_rules(expr.right)
 

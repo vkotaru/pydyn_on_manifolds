@@ -1,10 +1,12 @@
+from abc import ABC
+
 import numpy as np
 from pydyn.base.expr import Expression, Expr, Manifold
 from pydyn.operations.transpose import Transpose
 from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
 
 
-class MatrixExpr(Expr):
+class MatrixExpr(Expr, ABC):
     def __init__(self):
         super().__init__()
         self.type = Expression.MATRIX
@@ -38,7 +40,7 @@ class MatrixExpr(Expr):
             raise UndefinedCaseError
 
 
-class Matrix(MatrixExpr):
+class Matrix(MatrixExpr, ABC):
     def __init__(self, s=None, size=(3, 3), value=None, attr=None):
         super().__init__()
         self.name = s
@@ -87,13 +89,13 @@ class Matrix(MatrixExpr):
                 return Matrix(s='int_' + s, size=self.size)
 
 
-class SkewSymmMatrix(Matrix):
+class SkewSymmMatrix(Matrix, ABC):
     def __init__(self):
         super().__init__()
         self.attr.append('SkewSymmetry')
 
 
-class SO3(Matrix, Manifold):
+class SO3(Matrix, Manifold, ABC):
     def __init__(self, s=None, size=(3, 3), value=None, attr=None):
         super().__init__(s, size, value, attr)
         super(Manifold, self).__init__()
@@ -126,14 +128,15 @@ class SO3(Matrix, Manifold):
 ZeroMatrix = Matrix('0', attr=['Constant', 'Zero'])
 IdentityMatrix = Matrix('I', attr=['Constant', 'Identity'])
 
-def getMatrices(input):
-    if isinstance(input, list):
-        vars = input
-    elif isinstance(input, str):
-        vars = input.split()
+
+def getMatrices(x):
+    if isinstance(x, list):
+        vars_ = x
+    elif isinstance(x, str):
+        vars_ = x.split()
     else:
         return None
     s = []
-    for v in vars:
+    for v in vars_:
         s.append(Matrix(v))
     return tuple(s)

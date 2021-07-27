@@ -3,6 +3,7 @@ pydyn is python library for Dynamics on Manifolds.
 """
 
 import sys
+import numpy as np
 
 if sys.version_info < (3, 6):
     raise ImportError("Python version >= 3.6 is required")

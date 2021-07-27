@@ -39,6 +39,7 @@ def point_mass():
 
     print('done')
 
+
 def two_point_masses():
     """two point masses"""
     m1, m2, g = getScalars('m1 m2 g', attr=['Constant'])
@@ -47,18 +48,19 @@ def two_point_masses():
 
     v1, v2 = x1.diff(), x2.diff()
     # computing energies
-    PE = m1 * x1.dot((g * e3)) + m2*x2.dot(g*e3)
-    KE = m1 * Dot(v1, v1) * 0.5 + m2*Dot(v2,v2)*0.5
+    PE = m1 * x1.dot((g * e3)) + m2 * x2.dot(g * e3)
+    KE = m1 * Dot(v1, v1) * 0.5 + m2 * Dot(v2, v2) * 0.5
 
     # Lagrangian
     L = KE - PE
     # infinitesimal work
-    deltaW = Dot(x1.delta(), f1) + Dot(x2.delta(), f2)
+    dW = Dot(x1.delta(), f1) + Dot(x2.delta(), f2)
 
-    eqs = compute_eom(L, deltaW, [[], [x1, x2], []])
+    eqs = compute_eom(L, dW, [[], [x1, x2], []])
     print_latex(eqs)
 
     print('done')
+
 
 if __name__ == "__main__":
     two_point_masses()
