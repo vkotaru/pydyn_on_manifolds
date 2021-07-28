@@ -1,9 +1,11 @@
+from abc import ABC
+
 from pydyn.base.expr import Expr, Expression
 from pydyn.base.nodes import UnaryNode
 from pydyn.utils.errors import ExpressionMismatchError
 
 
-class Transpose(Expr, UnaryNode):
+class Transpose(Expr, UnaryNode, ABC):
     def __init__(self, expr=None):
         super().__init__()
         if expr is not None:

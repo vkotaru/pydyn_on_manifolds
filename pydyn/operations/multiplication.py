@@ -27,7 +27,7 @@ class Mul(BinaryNode, ScalarExpr):
         self.isZero = self.left.isZero or self.right.isZero
 
     def __str__(self):
-        str = self.left.__str__()  + self.right.__str__()
+        str = self.left.__str__() + self.right.__str__()
         return str
 
     def delta(self):
@@ -75,7 +75,7 @@ class MVMul(BinaryNode, VectorExpr):
         self.isZero = self.left.isZero or self.right.isZero
 
     def __str__(self):
-        str = self.left.__str__()  + self.right.__str__()
+        str = self.left.__str__() + self.right.__str__()
         return str
 
     def __mul__(self, other):
@@ -124,7 +124,7 @@ class MMMul(BinaryNode, MatrixExpr):
         self.isZero = self.left.isZero or self.right.isZero
 
     def __str__(self):
-        str = self.left.__str__()  + self.right.__str__()
+        str = self.left.__str__() + self.right.__str__()
         return str
 
     def __mul__(self, other):
@@ -298,7 +298,7 @@ class VVMul(Expr, BinaryNode):
         self.isZero = self.left.isZero or self.right.isZero
 
     def __str__(self):
-        return self.left.__str__()  + self.right.__str__()
+        return self.left.__str__() + self.right.__str__()
 
     def __add__(self, other):
         if self.type == Expression.SCALAR:

@@ -1,3 +1,6 @@
+from abc import ABC
+
+
 class Node(object):
     def __init__(self):
         super().__init__()
@@ -8,7 +11,8 @@ class Node(object):
     def has(self, elem):
         raise NotImplementedError
 
-class UnaryNode(Node):
+
+class UnaryNode(Node, ABC):
     """
     Unary node used by transpose, hat, vee, and such operators
     """
@@ -29,7 +33,7 @@ class UnaryNode(Node):
         return elem.__str__() == self.__str__()
 
 
-class BinaryNode(Node):
+class BinaryNode(Node, ABC):
     """
     Binary Node used multiplication, dot, cross and other operators
     """
@@ -59,8 +63,9 @@ class BinaryNode(Node):
         return self.left.has(elem) or self.right.has(elem)
 
 
-class NaryNode(Node):
+class NaryNode(Node, ABC):
     """N-ary node for addition"""
+
     def __init__(self, *args):
         super().__init__()
         self._nodes = []
@@ -106,8 +111,8 @@ class NaryNode(Node):
         return len(self._nodes)
 
     def get_str(self, optr_sym='+'):
-        str = '('
+        s = '('
         for n in self.nodes[:-1]:
-            str += n.__str__() + optr_sym
-        str += self.nodes[-1].__str__() + ')'
-        return str
+            s += n.__str__() + optr_sym
+        s += self.nodes[-1].__str__() + ')'
+        return s

@@ -127,6 +127,8 @@ class SO3(Matrix, Manifold, ABC):
 
 ZeroMatrix = Matrix('0', attr=['Constant', 'Zero'])
 IdentityMatrix = Matrix('I', attr=['Constant', 'Identity'])
+O = ZeroMatrix
+I = IdentityMatrix
 
 
 def getMatrices(x):

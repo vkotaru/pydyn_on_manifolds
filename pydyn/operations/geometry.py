@@ -1,3 +1,5 @@
+from abc import ABC
+
 from pydyn.operations.transpose import Transpose
 from pydyn.base.matrices import MatrixExpr
 from pydyn.base.scalars import ScalarExpr, Scalar
@@ -7,7 +9,7 @@ from pydyn.base.nodes import UnaryNode, BinaryNode
 from pydyn.utils.errors import UndefinedCaseError, ExpressionMismatchError
 
 
-class Delta(UnaryNode, Expr):
+class Delta(UnaryNode, Expr, ABC):
     """
     Variation operator
     """
@@ -69,7 +71,7 @@ class Delta(UnaryNode, Expr):
         return Delta(self.expr.integrate())
 
 
-class Dot(BinaryNode, ScalarExpr):
+class Dot(BinaryNode, ScalarExpr, ABC):
     """
     Dot product of vectors
     """
@@ -95,7 +97,8 @@ class Dot(BinaryNode, ScalarExpr):
         from pydyn.operations.addition import Add
         if isinstance(self.right, MVMul):
             if self.right.left.isSymmetric and self.left == self.right.right:
-                return Add(Dot(self.left.delta(), self.right)*2, Dot(self.left, MVMul(self.right.left.delta(), self.right.right)))
+                return Add(Dot(self.left.delta(), self.right) * 2,
+                           Dot(self.left, MVMul(self.right.left.delta(), self.right.right)))
             else:
                 return Add(Dot(self.left.delta(), self.right), Dot(self.left, self.right.delta()))
         else:
@@ -111,7 +114,7 @@ class Dot(BinaryNode, ScalarExpr):
                 return Add(Dot(self.left.delta(), self.right), Dot(self.left, self.right.delta()))
 
 
-class Cross(BinaryNode, VectorExpr):
+class Cross(BinaryNode, VectorExpr, ABC):
     """
     Cross product of 3x1 vectors
     """
@@ -129,8 +132,28 @@ class Cross(BinaryNode, VectorExpr):
     def __str__(self):
         return 'Cross(' + self.left.__str__() + ',' + self.right.__str__() + ')'
 
+    def delta(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return Cross(self.left, self.right.delta())
+        elif not self.left.isConstant and self.right.isConstant:
+            return Cross(self.left.delta(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Vector('0', attr=['Constant', 'Zero'])
+        else:
+            return Cross(self.left.delta(), self.right) + Cross(self.left, self.right.delta())
 
-class Hat(UnaryNode, MatrixExpr):
+    def diff(self):
+        if self.left.isConstant and not self.right.isConstant:
+            return Cross(self.left, self.right.diff())
+        elif not self.left.isConstant and self.right.isConstant:
+            return Cross(self.left.diff(), self.right)
+        elif self.left.isConstant and self.right.isConstant:
+            return Vector('0', attr=['Constant', 'Zero'])
+        else:
+            return Cross(self.left.diff(), self.right) + Cross(self.left, self.right.diff())
+
+
+class Hat(UnaryNode, MatrixExpr, ABC):
     """
     Hat map: Rn to LieGroup G
     """
@@ -151,7 +174,7 @@ class Hat(UnaryNode, MatrixExpr):
         return Hat(self.expr.delta())
 
 
-class Vee(UnaryNode, MatrixExpr):
+class Vee(UnaryNode, MatrixExpr, ABC):
     """Vee map: LieGroup G to Rn"""
 
     def __init__(self, expr):

@@ -106,14 +106,14 @@ def Number(value):
         raise Exception('Input to number should be int/float/string')
 
 
-def getScalars(input, attr=None):
-    if isinstance(input, list):
-        vars = input
-    elif isinstance(input, str):
-        vars = input.split()
+def getScalars(x, attr=None):
+    if isinstance(x, list):
+        variables = x
+    elif isinstance(x, str):
+        variables = x.split()
     else:
         return None
     s = []
-    for v in vars:
+    for v in variables:
         s.append(Scalar(v, attr=attr))
     return tuple(s)

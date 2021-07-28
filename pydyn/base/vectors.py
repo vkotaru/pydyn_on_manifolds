@@ -1,7 +1,7 @@
 from abc import ABC
 
 import numpy as np
-from pydyn.base.expr import Expression, Expr
+from pydyn.base.expr import Expression, Expr, Manifold
 from pydyn.utils.errors import ExpressionMismatchError, UndefinedCaseError
 
 
@@ -41,8 +41,11 @@ class VectorExpr(Expr, ABC):
 
     def cross(self, other):
         from pydyn.operations.geometry import Cross
-
         return Cross(self, other)
+
+    def T(self):
+        from pydyn.operations.transpose import Transpose
+        return Transpose(self)
 
 
 class Vector(VectorExpr, ABC):
@@ -96,23 +99,83 @@ class TSO3(Vector, ABC):
         self.SO3 = SO3
         self.attr.append('TangentVector')
 
+    def delta(self, substitute=False):
+        """
+        # reference: https://link.springer.com/book/10.1007%2F978-3-319-56953-6
+        # Global Formulations of Lagrangian and Hamiltonian Dynamics on Manifolds
+        # Taeyoung LeeMelvin LeokN. Harris McClamroch
+        # TODO add page number
+        """
+        from pydyn.operations.geometry import Hat, Delta
+        if substitute:
+            eta = self.SO3.get_variation_vector()
+            return Hat(self) * eta + eta.diff()
+        else:
+            return Delta(self)
+
+
+class TS2(Vector, ABC):
+    """TS2 Tangent space of S2 manifold"""
+
+    def __init__(self, s, S2=None):
+        super().__init__(s, value=None, attr=None)
+        self.S2 = S2
+        self.attr.append('TangentVector')
+
+    def delta(self, substitute=False):
+        """
+        # reference: https://link.springer.com/book/10.1007%2F978-3-319-56953-6
+        # Global Formulations of Lagrangian and Hamiltonian Dynamics on Manifolds
+        # Taeyoung LeeMelvin LeokN. Harris McClamroch
+        # TODO add page number
+        """
+        from pydyn.operations.multiplication import VVMul
+        from pydyn.operations.geometry import Hat, Delta
+        from pydyn.operations.transpose import Transpose
+        from pydyn.base.matrices import I
+        if substitute:
+            raise NotImplementedError
+        else:
+            return Delta(self)
+
+
+class S2(Vector, Manifold, ABC):
+    def __init__(self, s=None, size=(3, 1), value=None, attr=None):
+        super().__init__(s, size, value, attr)
+        super(Manifold, self).__init__()
+        self.tangent_vector = '\\omega_{' + self.name + '}'
+        self.variation_vector = '\\xi_{' + self.name + '}'
+        if attr is None:
+            attr = []
+        attr.append('Manifold')
+        self.attr = attr
+
     def delta(self):
-        from pydyn.operations.geometry import Hat
-        eta = self.SO3.get_variation_vector()
-        return Hat(self) * eta + eta.diff()
+        from pydyn.operations.geometry import Cross
+        return Cross(self.get_variation_vector(), self)
+
+    def get_tangent_vector(self):
+        return TS2(self.tangent_vector, S2=self)
+
+    def get_variation_vector(self):
+        return Vector(self.variation_vector)
+
+    def diff(self):
+        from pydyn.operations.geometry import Cross
+        return Cross(self.get_tangent_vector(), self)
 
 
 ZeroVector = Vector(s='0v', attr=['Constant, Zero'])
 
 
-def getVectors(input, attr=None):
-    if isinstance(input, list):
-        vars = input
-    elif isinstance(input, str):
-        vars = input.split()
+def getVectors(x, attr=None):
+    if isinstance(x, list):
+        variables = x
+    elif isinstance(x, str):
+        variables = x.split()
     else:
         return None
     s = []
-    for v in vars:
+    for v in variables:
         s.append(Vector(v, attr=attr))
     return tuple(s)

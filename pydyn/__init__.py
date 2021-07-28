@@ -10,8 +10,8 @@ if sys.version_info < (3, 6):
 del sys
 
 from .base.scalars import Scalar, getScalars
-from .base.vectors import Vector, getVectors
-from .base.matrices import Matrix, SO3, getMatrices
+from .base.vectors import Vector, S2, TS2, TSO3, ZeroVector, getVectors
+from .base.matrices import Matrix, SO3, O, I, getMatrices
 
 from .operations.addition import Add, VAdd, MAdd
 from .operations.multiplication import Mul, MMMul, MVMul, SMMul, SVMul, VVMul

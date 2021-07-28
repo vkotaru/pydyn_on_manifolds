@@ -74,5 +74,23 @@ x2_ = x.integrate()
 
 delx2 = ddelx.integrate()
 
+# -------------
+q = S2('q')
+xi = q.get_variation_vector()
+om = q.get_tangent_vector()
+dxi = xi.diff()
+dom = om.diff()
+delxi = xi.delta()
+delom = om.delta()
+
+# ---------------
+R = SO3('R')
+eta = R.get_variation_vector()
+Om = R.get_tangent_vector()
+deta = eta.diff()
+dOm = Om.diff()
+deleta = eta.delta()
+delOm = Om.delta()
+
 # print(R1R2)
 print('done')

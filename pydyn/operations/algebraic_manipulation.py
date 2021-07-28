@@ -103,7 +103,7 @@ def efv(expr, vec):
             return ZeroMatrix
 
     elif isinstance(expr, Cross):
-        if (expr.left == expr.right):
+        if expr.left == expr.right:
             return ZeroMatrix
         elif expr.right == vec:
             return Hat(expr.left)
@@ -205,3 +205,7 @@ def efm(expr, vec):
         raise NotImplementedError
     else:
         raise UndefinedCaseError
+
+
+def solve_for(expr, variable):
+    raise NotImplementedError

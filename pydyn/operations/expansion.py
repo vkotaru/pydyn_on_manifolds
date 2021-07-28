@@ -68,7 +68,7 @@ def expand_scalar(expr):
             if has_nested_add(expr):
                 return expand(Dot(expand(expr.left), expand(expr.right)))
             else:
-                return expr
+                return Dot(expand(expr.left), expand(expr.right))
 
     elif isinstance(expr, VVMul):
         raise NotImplementedError
