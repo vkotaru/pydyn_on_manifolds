@@ -26,7 +26,7 @@ class UnaryNode(Node):
         self._expr = e
 
     def has(self, elem):
-        return elem.__str__() == self.expr.__str__()
+        return elem.__str__() == self.__str__()
 
 
 class BinaryNode(Node):

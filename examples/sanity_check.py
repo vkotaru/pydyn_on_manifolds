@@ -12,8 +12,8 @@ scalar_scalar_scalar_add = a + b + c
 
 try:
     scalar_vector_add = a + x
-except ExpressionMismatchError:
-    print('ExpressionMismatchError: scalar_vector_add = a + x')
+except Exception as e:
+    print('ExpressionMismatchError: scalar_vector_add = a + x ', e)
 
 scalar_scalar_mul = a * b
 scalar_vector_mul = a * x
@@ -73,7 +73,6 @@ x2 = dx.integrate()
 x2_ = x.integrate()
 
 delx2 = ddelx.integrate()
-
 
 # print(R1R2)
 print('done')

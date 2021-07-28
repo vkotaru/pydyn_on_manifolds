@@ -17,7 +17,10 @@ def ibp(_expr, _expr_int):
         if isinstance(_expr, Mul):
             return Mul(ibp(_expr.left, _expr_int), ibp(_expr.right, _expr_int))
         elif isinstance(_expr, Add):
-            return Add(ibp(_expr.left, _expr_int), ibp(_expr.right, _expr_int))
+            ibp_expr = Add()
+            for n in _expr.nodes:
+                ibp_expr += ibp(n, _expr_int)
+            return ibp_expr
         elif isinstance(_expr, Dot):
             if _expr.left == _expr_int:
                 return Dot(_expr.left.integrate() * (-1), _expr.right.diff())
@@ -45,7 +48,7 @@ def integrate_by_parts_vectors(expr, vectors):
     expr = expand(expr)
     expr = full_simplify(expr)
     for vector in vectors:
-        expr = col(expr, vector) # TODO clean and update this function
+        expr = col(expr, vector)  # TODO clean and update this function
         expr = ibp(expr, vector)
         expr = full_simplify(expr)
 

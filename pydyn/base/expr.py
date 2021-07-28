@@ -16,6 +16,7 @@ class Expr(object):
     """
 
     def __init__(self):
+        # name of the
         self._name = None
         self._value = None
         self._size = None

@@ -43,16 +43,22 @@ def double_rigid_pendulum():
     Om1, eta1 = R1.get_tangent_vector(), R1.get_variation_vector()
     Om2, eta2 = R2.get_tangent_vector(), R2.get_variation_vector()
 
-    # KE = Dot(Om, J * Om) * 0.5
-    # PE = m * g * Dot(R * rho, e3)
-    # L = KE-PE
-    #
-    # deltaW = Dot(eta, M)
-    # eqns = compute_eom(L, deltaW, [[],[],[R]])
-    # print_latex(eqns)
+    x1 = R1 * rho1
+    x2 = R1 * l1 + R2 * rho2
+    v2 = x2.diff()
+
+    KE = Dot(Om1, J1 * Om1) * 0.5 + Dot(Om2, J2 * Om2) * 0.5 + Dot(v2, v2) * m2 * 0.5
+    PE = (m1 * g * Dot(R1 * rho1, e3)) + (m2 * g * Dot(R2 * rho2, e3))
+    L = KE - PE
+
+    deltaW = Dot(eta1, M1) + Dot(eta2, M2)
+
+    eqns = compute_eom(L, deltaW, [[], [], [R1, R2]])
+    print_latex(eqns)
 
     print('done')
 
 
 if __name__ == "__main__":
-    rigid_pendulum()  # double_rigid_pendulum()
+    # rigid_pendulum()
+    double_rigid_pendulum()

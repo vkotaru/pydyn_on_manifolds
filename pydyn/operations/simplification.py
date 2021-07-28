@@ -178,22 +178,18 @@ def simplify(expr):
     if isinstance(expr, ScalarExpr):  # TODO modify this to Expression.SCALAR?
         if isinstance(expr, Add):
             """Remove zeros"""
-            if expr.left.value is not None and expr.right.value is not None:
-                val = expr.left.value + expr.right.value
-                return Scalar(str(val), value=val, attr=['Constant'])
-            elif expr.right.value is not None:
-                return simplify(Add(expr.right, expr.left))
-            elif expr.left.value == 0:
-                return simplify(expr.right)
-            else:
-                if expr.left.isZero and expr.right.isZero:
-                    return Scalar('0', value=0, attr=['Constant', 'Zero'])
-                elif expr.left.isZero:
-                    return simplify(expr.right)
-                elif expr.right.isZero:
-                    return simplify(expr.left)
+            value = 0
+            sym_exprs = []
+            for n in expr.nodes:
+                if n.isZero:
+                    continue
+                elif n.value is not None:
+                    value += n.value
                 else:
-                    return Add(simplify(expr.left), simplify(expr.right))
+                    sym_exprs.append(simplify(n))
+            if value != 0:
+                sym_exprs.append(Scalar(str(value), value=value, attr=['Constant', 'Zero']))
+            return Add(sym_exprs)
 
         elif isinstance(expr, Mul):
             if has_zeros(expr):
@@ -217,13 +213,15 @@ def simplify(expr):
 
     elif isinstance(expr, VectorExpr):
         if isinstance(expr, VAdd):
-            if isinstance(expr.right, SVMul) and expr.right.value is not None:
-                if expr.right.value == 0:
-                    return simplify(expr)
+            sym_exprs = []
+            for n in expr.nodes:
+                if n.isZero:
+                    continue
+                elif isinstance(n, SVMul) and n.value == 0:
+                    continue
                 else:
-                    return VAdd(simplify(expr.left), SVMul(simplify(expr.right.left), simplify(expr.right.right)))
-            else:
-                VAdd(simplify(expr.left), simplify(expr.right))
+                    sym_exprs.append(simplify(n))
+            return VAdd(sym_exprs)
         elif isinstance(expr, SVMul):
             return SVMul(simplify(expr.left), simplify(expr.right))
         else:

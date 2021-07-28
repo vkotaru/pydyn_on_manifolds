@@ -1,15 +1,17 @@
+from abc import ABC
+
 from pydyn.base.matrices import MatrixExpr, ZeroMatrix
-from pydyn.base.scalars import ScalarExpr, Zero
+from pydyn.base.scalars import ScalarExpr, Zero, Scalar
 from pydyn.base.vectors import VectorExpr, ZeroVector
 from pydyn.base.nodes import NaryNode
 
 
-class Add(NaryNode, ScalarExpr):
+class Add(NaryNode, ScalarExpr, ABC):
     """Scalar Addition"""
 
     def __init__(self, *args):
         super().__init__(*args)
-        
+
     def __str__(self):
         return super().get_str('+')
 
@@ -39,7 +41,7 @@ class Add(NaryNode, ScalarExpr):
             return Zero
 
 
-class VAdd(NaryNode, VectorExpr):
+class VAdd(NaryNode, VectorExpr, ABC):
     """Vector Addition"""
 
     def __init__(self, *args):
@@ -74,7 +76,7 @@ class VAdd(NaryNode, VectorExpr):
             return ZeroVector
 
 
-class MAdd(NaryNode, MatrixExpr):
+class MAdd(NaryNode, MatrixExpr, ABC):
     """Matrix Addition"""
 
     def __init__(self, *args):

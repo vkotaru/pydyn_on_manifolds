@@ -10,7 +10,10 @@ def col(_scalar, _vector):
     #
     # ADDITION
     if isinstance(_scalar, Add):
-        return col(_scalar.left, _vector) + col(_scalar.right, _vector)
+        collected_scalars = Add()
+        for n in _scalar.nodes:
+            collected_scalars += col(n, _vector)
+        return collected_scalars
 
     #  MULTIPLICATION
     elif isinstance(_scalar, Mul):
